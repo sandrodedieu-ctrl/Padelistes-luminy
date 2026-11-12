@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#030A18">
+<title>Les Padelistes de Luminy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,800;125,900&family=Instrument+Serif:ital@1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#030A18; --navy:#071C3D; --blue:#0E3A7A; --court:#1656B8; --court-2:#1F6AD6;
+  --ball:#D9F24A; --white:#F4F7FB; --muted:#B4C2DA; --radius:18px;
+  --display:'Archivo',system-ui,sans-serif; --serif:'Instrument Serif',Georgia,serif; --body:'Inter',system-ui,sans-serif;
+  --ease-out:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--ink)}
+body{font-family:var(--body);background:var(--ink);color:var(--white);line-height:1.55;font-size:16px;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+button{font:inherit;color:inherit}
+.btn:focus-visible,.card3d:focus-visible,a:focus-visible,.dots button:focus-visible{outline:3px solid var(--ball);outline-offset:3px}
+
+/* LOADER */
+#loader{position:fixed;inset:0;z-index:100;background:var(--ink);display:grid;place-items:center;transition:clip-path 1s var(--ease-out);clip-path:inset(0 0 0 0)}
+#loader.out{clip-path:inset(0 0 100% 0)}
+.ld{display:flex;flex-direction:column;align-items:center;gap:18px}
+.ld-ball{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#F4FF9A,#B8D12A);box-shadow:0 0 30px rgba(217,242,74,.6);animation:bounce .55s cubic-bezier(.5,0,.5,1) infinite alternate}
+@keyframes bounce{from{transform:translateY(-34px)}to{transform:translateY(0) scale(1.15,.85)}}
+.ld-num{font-family:var(--display);font-stretch:125%;font-weight:900;font-size:64px;line-height:1;font-variant-numeric:tabular-nums}
+.ld-txt{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--muted)}
+
+/* NAV */
+.topnav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:linear-gradient(180deg,rgba(3,10,24,.8),rgba(3,10,24,0))}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-stretch:125%;font-weight:900;font-size:12px;line-height:1.1;letter-spacing:.04em;text-transform:uppercase;text-decoration:none;min-height:44px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border-radius:999px;font-weight:600;font-size:15px;text-decoration:none;border:0;cursor:pointer;transition:transform .2s var(--ease-out),background .2s,box-shadow .2s}
+.btn-ball{background:var(--ball);color:var(--ink);box-shadow:0 10px 30px -10px rgba(217,242,74,.7)}
+.btn-ball:hover{transform:translateY(-2px);background:#E8FB70}
+.btn-ball:active{transform:scale(.97)}
+.topnav .btn{min-height:44px;padding:0 18px;font-size:14px}
+
+/* FILM */
+#film{position:relative;height:690vh}
+.stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+#scene{position:absolute;inset:0;width:100%;height:100%;display:block}
+.shade{position:absolute;inset:0;pointer-events:none;background:
+  radial-gradient(120% 80% at 50% 45%,rgba(3,10,24,0) 40%,rgba(3,10,24,.7) 100%),
+  linear-gradient(180deg,rgba(3,10,24,.4) 0%,rgba(3,10,24,0) 22%,rgba(3,10,24,0) 55%,rgba(3,10,24,.85) 100%)}
+.dim{position:absolute;inset:0;background:var(--ink);opacity:0;pointer-events:none;z-index:2}
+.grain{position:absolute;inset:-50%;pointer-events:none;opacity:.07;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain .9s steps(4) infinite}
+@keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-4%,3%)}50%{transform:translate(3%,-2%)}75%{transform:translate(-2%,-4%)}100%{transform:translate(0,0)}}
+
+.chap{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;padding:96px 58px 96px 22px;pointer-events:none;visibility:hidden}
+.chap.on{visibility:visible}
+.chap .k{font-family:var(--serif);font-style:italic;font-size:clamp(19px,2.4vw,26px);color:var(--ball);margin-bottom:10px}
+.chap .t{font-family:var(--display);font-stretch:125%;font-weight:900;text-transform:uppercase;line-height:.92;letter-spacing:-.01em;font-size:clamp(40px,11vw,128px);text-shadow:0 10px 40px rgba(3,10,24,.6)}
+.chap .t .w{display:inline-block;white-space:nowrap}
+.chap .t .c{display:inline-block;will-change:transform,opacity,filter}
+.chap .p{max-width:27em;color:#E3EAF5;font-size:17px;margin-top:16px;text-shadow:0 2px 16px rgba(3,10,24,.9)}
+.chap .p b{color:var(--ball);font-weight:600}
+.fade{will-change:transform,opacity}
+#c0{justify-content:center;align-items:center;text-align:center;padding-right:22px}
+#c0 .t{font-size:clamp(42px,12vw,150px)}
+#c1{justify-content:flex-end}
+#c2{justify-content:flex-start;padding-top:104px}
+#c3{justify-content:flex-end}
+#c5{justify-content:space-between;align-items:center;text-align:center;padding:84px 22px 80px}
+#c4{justify-content:flex-end}
+#c6{justify-content:center}
+.scroll-hint{margin-top:34px;display:flex;flex-direction:column;align-items:center;gap:10px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.scroll-hint i{display:block;width:1px;height:46px;background:linear-gradient(var(--ball),transparent);transform-origin:top;animation:drip 1.6s var(--ease-out) infinite}
+@keyframes drip{0%{transform:scaleY(0)}60%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+
+/* price compare */
+.compare{display:flex;align-items:center;flex-wrap:wrap;gap:14px;margin-top:18px}
+.compare .old{position:relative;font-family:var(--display);font-stretch:125%;font-weight:800;font-size:34px;color:var(--muted)}
+.compare .old i{position:absolute;left:-6%;right:-6%;top:52%;height:4px;background:#FF5A4F;border-radius:4px;transform:scaleX(0) rotate(-8deg);transform-origin:left;transition:transform .6s var(--ease-out) .35s}
+.chap.live .compare .old i{transform:scaleX(1) rotate(-8deg)}
+.compare .new{font-family:var(--display);font-stretch:125%;font-weight:900;font-size:56px;line-height:1;color:var(--ball);text-shadow:0 0 30px rgba(217,242,74,.45)}
+.compare .note{font-size:14px;color:#E3EAF5;line-height:1.3}
+.tag{display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:10px 14px;border-radius:12px;background:rgba(3,10,24,.55);border:1px solid rgba(244,247,251,.16);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);font-size:15px}
+
+/* card */
+.card-wrap{perspective:1200px;width:min(80vw,370px)}
+.card3d{position:relative;display:block;width:100%;aspect-ratio:1.586/1;transform-style:preserve-3d;transition:transform .9s var(--ease-out);cursor:pointer;background:none;border:0;text-align:left;border-radius:var(--radius)}
+.card3d.flipped{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:var(--radius);backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;padding:18px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 40px 80px -20px rgba(0,0,0,.8),inset 0 0 0 1px rgba(255,255,255,.14)}
+.front{background:linear-gradient(135deg,var(--court-2),var(--court) 55%,var(--blue))}
+.front::before{content:"";position:absolute;inset:12px;border:2px solid rgba(255,255,255,.4);border-radius:8px;background:linear-gradient(90deg,transparent calc(50% - 1px),rgba(255,255,255,.4) calc(50% - 1px),rgba(255,255,255,.4) calc(50% + 1px),transparent calc(50% + 1px))}
+.front::after,.back::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.28) 50%,transparent 65%);transform:translateX(-120%);animation:shine 4.5s var(--ease-out) infinite 1s}
+@keyframes shine{0%,60%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+.front>*,.back>*{position:relative;z-index:1}
+.face .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.face .club{font-family:var(--display);font-stretch:125%;font-weight:900;font-size:16px;line-height:1.05;text-transform:uppercase}
+.face .season{font-size:12px;font-weight:600;background:var(--ball);color:var(--ink);padding:4px 10px;border-radius:99px;white-space:nowrap}
+.face .holder{font-size:12px;text-transform:uppercase;letter-spacing:.12em;opacity:.85}
+.face .holder b{display:block;font-family:var(--serif);font-style:italic;font-weight:400;font-size:23px;letter-spacing:0;text-transform:none;opacity:1}
+.back{background:var(--white);color:var(--ink);transform:rotateY(180deg)}
+.back ul{list-style:none;font-size:14px;display:grid;gap:5px}
+.back li{display:flex;gap:8px;align-items:center}
+.back .bottom{display:flex;justify-content:space-between;align-items:flex-end}
+.qr{width:54px;height:54px}
+.offer{display:flex;flex-direction:column;align-items:center;gap:14px;max-width:30em}
+.offer p{font-size:16px;color:#E3EAF5}
+.offer p b{color:var(--ball);font-weight:600}
+.tap{font-size:13px;color:var(--muted);margin-top:8px;text-align:center}
+.chap .pe{pointer-events:none}
+.chap.live .pe{pointer-events:auto}
+
+/* reservation steps */
+.steps{list-style:none;display:grid;gap:10px;margin-top:22px;max-width:460px}
+.steps li{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;border-radius:16px;background:rgba(3,10,24,.62);border:1px solid rgba(244,247,251,.14);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);transform:translateX(calc((1 - var(--s,1)) * -40px));opacity:var(--s,1)}
+.steps .num{flex:none;width:34px;height:34px;border-radius:50%;background:var(--ball);color:var(--ink);display:grid;place-items:center;font-family:var(--display);font-stretch:125%;font-weight:900}
+.steps b{display:block;font-weight:600;line-height:1.35}
+.steps span.s{display:block;font-size:14px;color:var(--muted);margin-top:2px}
+.mail{display:inline-flex;align-items:center;gap:8px;margin-top:8px;padding:6px 12px;border-radius:99px;border:1px dashed rgba(217,242,74,.6);color:var(--ball);font-size:13px;font-weight:600}
+.mail::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ball);animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.25}}
+
+/* build HUD */
+.build{position:absolute;z-index:3;top:76px;right:18px;text-align:right;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);pointer-events:none}
+.build b{display:block;font-family:var(--display);font-stretch:125%;font-weight:900;font-size:26px;color:var(--white);letter-spacing:0;font-variant-numeric:tabular-nums}
+.build .bb{width:120px;height:2px;background:rgba(244,247,251,.15);margin:6px 0 0 auto;border-radius:2px;overflow:hidden}
+.build .bb span{display:block;height:100%;background:var(--ball);transform-origin:left;transform:scaleX(0)}
+.build .st{margin-top:6px;font-size:11px;color:var(--ball);letter-spacing:.1em}
+
+/* chapter dots */
+.dots{position:absolute;z-index:6;right:4px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;z-index:5}
+.dots button{width:44px;height:40px;border:0;background:none;cursor:pointer;display:grid;place-items:center}
+.dots button span{width:8px;height:8px;border-radius:50%;background:rgba(244,247,251,.3);transition:transform .3s var(--ease-out),background .3s}
+.dots button[aria-current="true"] span{background:var(--ball);transform:scale(1.5)}
+
+
+
+
+/* nav extras */
+.nav-r{display:flex;gap:8px;align-items:center}
+.btn-ghost{background:rgba(3,10,24,.45);color:var(--white);border:1px solid rgba(244,247,251,.3);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.btn-ghost:hover{background:rgba(244,247,251,.12)}
+.btn svg{flex:none}
+/* rules page */
+.rules{position:fixed;inset:0;z-index:90;background:var(--ink);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.rules[hidden]{display:none}
+.rules.show{animation:rin .45s var(--ease-out)}
+@keyframes rin{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.rules-top{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:18px 18px 14px;background:rgba(3,10,24,.96);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid rgba(244,247,251,.08)}
+.rules-top .k{font-family:var(--serif);font-style:italic;color:var(--ball);font-size:18px}
+.rules-top h2{font-family:var(--display);font-stretch:125%;font-weight:900;text-transform:uppercase;font-size:clamp(30px,8vw,56px);line-height:.95;margin-top:4px}
+.rules-close{flex:none;width:48px;height:48px;border-radius:50%;border:1px solid rgba(244,247,251,.25);background:rgba(244,247,251,.06);color:var(--white);display:grid;place-items:center;cursor:pointer}
+.rules-close:hover{background:rgba(244,247,251,.14)}
+.rules-close:focus-visible,.rules summary:focus-visible{outline:3px solid var(--ball);outline-offset:3px}
+.rules-body{max-width:760px;margin:0 auto;padding:6px 18px 60px}
+.rules-intro{color:#DCE5F3;font-size:17px;margin-bottom:22px}
+.rules details{border:1px solid rgba(244,247,251,.1);border-radius:16px;background:linear-gradient(160deg,rgba(31,106,214,.16),rgba(14,58,122,.06));margin-bottom:10px;overflow:hidden}
+.rules details[open]{border-color:rgba(217,242,74,.35)}
+.rules summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:14px;min-height:56px;padding:12px 16px;font-weight:600;font-size:17px}
+.rules summary::-webkit-details-marker{display:none}
+.rules summary::after{content:"";margin-left:auto;width:10px;height:10px;border-right:2.5px solid var(--ball);border-bottom:2.5px solid var(--ball);transform:rotate(45deg);transition:transform .3s var(--ease-out)}
+.rules details[open] summary::after{transform:rotate(-135deg)}
+.rules summary .n{font-family:var(--display);font-stretch:125%;font-weight:900;color:var(--ball);font-size:14px;min-width:24px}
+.rules ul{padding:0 18px 16px 44px;display:grid;gap:8px;color:#DCE5F3;font-size:16px}
+.rules li::marker{color:var(--ball)}
+.rules b{color:var(--white)}
+.rules i{color:var(--ball);font-style:normal;font-size:13px;font-weight:600}
+.rules h3{font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:2px 18px 8px 18px}
+.rules-src{margin-top:22px;font-size:13px;color:var(--muted)}
+.rules-src a{color:var(--ball)}
+html.lock{overflow:hidden}
+.wa{display:inline-flex;align-items:center;gap:10px;margin-top:18px;align-self:flex-start}
+/* play */
+.play{position:absolute;z-index:6;right:16px;bottom:44px;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:99px;border:1px solid rgba(244,247,251,.25);background:rgba(3,10,24,.55);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:var(--white);font-size:13px;font-weight:600;cursor:pointer;transition:background .2s,border-color .2s}
+.play:hover{background:rgba(244,247,251,.12)}
+.play[aria-pressed="true"]{border-color:var(--ball)}
+.play .i-pause{display:none}.play[aria-pressed="true"] .i-play{display:none}.play[aria-pressed="true"] .i-pause{display:block}
+.play:focus-visible{outline:3px solid var(--ball);outline-offset:3px}
+/* HUD */
+.hud{position:absolute;z-index:4;left:18px;right:18px;bottom:18px;display:flex;align-items:center;gap:14px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);pointer-events:none}
+.hud .n{font-family:var(--display);font-stretch:125%;font-weight:900;color:var(--white);font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.hud .bar{flex:1;height:2px;background:rgba(244,247,251,.15);border-radius:2px;overflow:hidden}
+.hud .bar span{display:block;height:100%;background:var(--ball);transform-origin:left;transform:scaleX(0)}
+
+/* AFTER FILM */
+section.block{padding:96px 0;background:var(--ink)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+.sec-head{margin-bottom:36px}
+.sec-head .k{font-family:var(--serif);font-style:italic;font-size:22px;color:var(--ball)}
+.sec-head h2{font-family:var(--display);font-stretch:125%;font-weight:900;text-transform:uppercase;font-size:clamp(36px,8vw,72px);line-height:.95;margin-top:8px}
+.team{display:grid;gap:14px;grid-template-columns:repeat(2,1fr)}
+@media(min-width:760px){.team{grid-template-columns:repeat(4,1fr)}}
+.mate{border-radius:var(--radius);padding:20px;background:linear-gradient(160deg,rgba(31,106,214,.35),rgba(14,58,122,.2));border:1px solid rgba(244,247,251,.08);transition:transform .3s var(--ease-out),border-color .3s}
+.mate:hover{transform:translateY(-4px);border-color:rgba(217,242,74,.45)}
+.avatar{width:54px;height:54px;border-radius:50%;background:var(--ball);color:var(--ink);display:grid;place-items:center;font-family:var(--display);font-stretch:125%;font-weight:900;font-size:17px;margin-bottom:14px}
+.mate b{display:block}
+.mate span{font-size:14px;color:var(--muted)}
+.marquee{overflow:hidden;border-block:1px solid rgba(244,247,251,.1);padding:18px 0;background:var(--ink)}
+.marquee div{display:flex;gap:40px;width:max-content;animation:mq 22s linear infinite;font-family:var(--display);font-stretch:125%;font-weight:900;text-transform:uppercase;font-size:28px;white-space:nowrap}
+.marquee span:nth-child(even){font-family:var(--serif);font-style:italic;font-weight:400;text-transform:none;color:var(--ball)}
+@keyframes mq{to{transform:translateX(-50%)}}
+.cta-final{border-radius:28px;padding:48px 24px;text-align:center;background:radial-gradient(120% 120% at 50% 0%,var(--court-2),var(--blue) 60%,var(--navy))}
+.cta-final h2{font-family:var(--display);font-stretch:125%;font-weight:900;text-transform:uppercase;font-size:clamp(32px,7vw,60px);line-height:.95}
+.cta-final p{color:#E3EAF5;margin:14px auto 26px;max-width:30em}
+footer{padding:36px 0 48px;color:var(--muted);font-size:14px;background:var(--ink)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s var(--ease-out),transform .8s var(--ease-out)}
+.reveal.in{opacity:1;transform:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<div id="loader" aria-hidden="true"><div class="ld"><div class="ld-ball"></div><div class="ld-num" id="ldn">0</div><div class="ld-txt">Les Padelistes de Luminy</div></div></div>
+
+<header class="topnav">
+  <a class="brand" href="#film" aria-label="Les Padelistes de Luminy, retour en haut">
+    <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="#D9F24A"/><path d="M4 11c6 2 10 7 11 18M28 21c-6-2-10-7-11-18" stroke="#030A18" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+    Les Padelistes<br>de Luminy
+  </a>
+  <div class="nav-r">
+    <a class="btn btn-ghost" href="#regles" id="nav-rules">Règles</a>
+    <a class="btn btn-ball" href="#film" data-goto="5">Adhérer</a>
+  </div>
+</header>
+
+<main>
+<section id="film" aria-label="Présentation animée de l'association">
+  <div class="stage">
+    <canvas id="scene" aria-hidden="true"></canvas>
+    <div class="dim" id="dim"></div>
+    <div class="shade"></div>
+    <div class="grain"></div>
+
+    <div class="build" id="build" aria-hidden="true">Construction du terrain<b id="buildn">0 %</b><div class="bb"><span id="buildb"></span></div><div class="st" id="builds">Plan</div></div>
+
+    <div class="chap" id="c0">
+      <div class="k fade">Association étudiante · Campus de Luminy</div>
+      <h1 class="t" data-lines="Les Padelistes|de Luminy">Les Padelistes de Luminy</h1>
+      <div class="scroll-hint fade"><i></i>Fais défiler pour construire le terrain</div>
+    </div>
+
+    <div class="chap" id="c1">
+      <div class="k fade">01 — À petit prix</div>
+      <h2 class="t" data-lines="Viens essayer|le padel">Viens essayer le padel</h2>
+      <div class="compare fade">
+        <span class="old">11 €<i></i></span>
+        <svg width="28" height="18" viewBox="0 0 28 18" fill="none" stroke="#D9F24A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9h22M17 2l7 7-7 7"/></svg>
+        <span class="new">7 €</span>
+        <span class="note">ta partie<br>en heures creuses</span>
+      </div>
+    </div>
+
+    <div class="chap" id="c2">
+      <div class="k fade">02 — Matériel</div>
+      <h2 class="t" data-lines="Matériel|offert">Matériel offert</h2>
+      <p class="p fade">La location du matériel est offerte : <b>raquette + balles</b>. Tu viens juste avec tes baskets.</p>
+    </div>
+
+    <div class="chap" id="c3">
+      <div class="k fade">03 — Événements</div>
+      <h2 class="t" data-lines="Événements|&amp; tournois">Événements et tournois</h2>
+      <p class="p fade">Des événements et des tournois seront organisés tout au long de l'année.</p>
+    </div>
+
+    <div class="chap" id="c4">
+      <div class="k fade">04 — Communauté</div>
+      <h2 class="t" data-lines="Trouve des|partenaires">Trouve des partenaires</h2>
+      <p class="p fade">Pour trouver des personnes avec qui jouer, rejoins notre <b>groupe WhatsApp</b>.</p>
+      <a class="btn btn-ball wa fade pe" href="https://chat.whatsapp.com/JMbYwN4bCps7GMuMALruAw" target="_blank" rel="noopener"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#030A18" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.6-5.4A8.4 8.4 0 1 1 21 11.5z"/></svg>Rejoindre le groupe WhatsApp</a>
+    </div>
+
+    <div class="chap" id="c5">
+      <div>
+        <div class="k fade">05 — Adhésion</div>
+        <h2 class="t" data-lines="12 € l'année">12 € l'année</h2>
+      </div>
+      <div class="card-wrap pe" id="cardwrap">
+        <button class="card3d" id="card" aria-label="Carte membre, appuie pour la retourner" aria-pressed="false">
+          <span class="face front">
+            <span class="top"><span class="club">Les Padelistes<br>de Luminy</span><span class="season">2026 – 2027</span></span>
+            <span class="holder">Carte membre<b>Ton nom ici</b></span>
+          </span>
+          <span class="face back">
+            <span class="club" style="font-size:14px">Avantages membres</span>
+            <ul>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0E3A7A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Partie à 7 € en heures creuses</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0E3A7A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Raquette + balles offertes</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0E3A7A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Événements et tournois</li>
+            </ul>
+            <span class="bottom"><span style="font-size:12px;font-weight:600">Dans ton Wallet</span>
+              <svg class="qr" viewBox="0 0 7 7" shape-rendering="crispEdges" aria-hidden="true"><g fill="#030A18"><rect width="3" height="3"/><rect x="4" width="3" height="3"/><rect y="4" width="3" height="3"/><rect x="4" y="4" width="1" height="1"/><rect x="6" y="5" width="1" height="2"/><rect x="5" y="6" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/></g><g fill="#fff"><rect x="1" y="1" width="1" height="1"/><rect x="5" y="1" width="1" height="1"/><rect x="1" y="5" width="1" height="1"/></g></svg>
+            </span>
+          </span>
+        </button>
+        <div class="tap">Appuie sur la carte pour la retourner</div>
+      </div>
+      <div class="offer fade pe">
+        <p>Pour profiter de ces avantages, prends l'adhésion à seulement <b>12 € à l'année</b>, ou <b>8 € pour les 20 premiers</b>.</p>
+        <a class="btn btn-ball" href="https://www.instagram.com/les.padelistes.de.luminy/" target="_blank" rel="noopener">Prendre mon adhésion</a>
+      </div>
+    </div>
+
+    <div class="chap" id="c6">
+      <div class="k fade">06 — Réservation</div>
+      <h2 class="t" data-lines="Réserve ton|terrain">Réserve ton terrain</h2>
+      <ol class="steps pe" id="steps">
+        <li><span class="num" aria-hidden="true">1</span><div><b>Ouvre l'application Tennis Academy de Luminy</b></div></li>
+        <li><span class="num" aria-hidden="true">2</span><div><b>Va dans l'onglet Padel</b><span class="s">Tu y vois tous les terrains disponibles.</span></div></li>
+        <li><span class="num" aria-hidden="true">3</span><div><b>Pour réserver, envoie un message par mail</b><span class="mail">Adresse mail bientôt disponible</span></div></li>
+      </ol>
+    </div>
+
+    <nav class="dots" aria-label="Chapitres">
+      <button data-goto="0" aria-label="Intro"><span></span></button>
+      <button data-goto="1" aria-label="Viens essayer le padel"><span></span></button>
+      <button data-goto="2" aria-label="Matériel offert"><span></span></button>
+      <button data-goto="3" aria-label="Événements et tournois"><span></span></button>
+      <button data-goto="4" aria-label="Trouver des partenaires"><span></span></button>
+      <button data-goto="5" aria-label="Adhésion"><span></span></button>
+      <button data-goto="6" aria-label="Réservation"><span></span></button>
+    </nav>
+
+    <button class="play" id="play" aria-pressed="false" aria-label="Lire le film automatiquement">
+      <svg class="i-play" width="14" height="14" viewBox="0 0 24 24" fill="#D9F24A" aria-hidden="true"><path d="M7 4v16l13-8z"/></svg>
+      <svg class="i-pause" width="14" height="14" viewBox="0 0 24 24" fill="#D9F24A" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+      <span id="playt">Lecture</span></button>
+    <div class="hud" aria-hidden="true"><span class="n" id="hudn">00</span><span id="hudl">Intro</span><span class="bar"><span id="hudb"></span></span><span>06</span></div>
+  </div>
+</section>
+
+<div class="marquee" aria-hidden="true"><div>
+  <span>Padel</span><span>entre étudiants</span><span>Luminy</span><span>tournois</span><span>Smash</span><span>soirées</span><span>Padel</span><span>entre étudiants</span><span>Luminy</span><span>tournois</span><span>Smash</span><span>soirées</span>
+</div></div>
+
+<section class="block">
+  <div class="wrap">
+    <div class="sec-head reveal"><div class="k">Le bureau</div><h2>L'équipe</h2></div>
+    <div class="team">
+      <div class="mate reveal"><div class="avatar" aria-hidden="true">SD</div><b>Sandro</b><span>Président</span></div>
+      <div class="mate reveal"><div class="avatar" aria-hidden="true">AG</div><b>Arthur Grimal</b><span>Trésorier</span></div>
+      <div class="mate reveal"><div class="avatar" aria-hidden="true">RG</div><b>Romain Guitard</b><span>Secrétaire</span></div>
+      <div class="mate reveal"><div class="avatar" aria-hidden="true">LC</div><b>Lisandru Chiariglione</b><span>Communication</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" style="padding-top:0">
+  <div class="wrap">
+    <div class="cta-final reveal">
+      <h2>On se voit sur le terrain ?</h2>
+      <p>Créneaux, tournois, ouverture des adhésions : tout passe par notre Instagram.</p>
+      <div class="cta-row" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center"><a class="btn btn-ball" href="https://www.instagram.com/les.padelistes.de.luminy/" target="_blank" rel="noopener">@les.padelistes.de.luminy</a><a class="btn btn-ghost" href="https://chat.whatsapp.com/JMbYwN4bCps7GMuMALruAw" target="_blank" rel="noopener">Groupe WhatsApp</a></div>
+    </div>
+  </div>
+</section>
+<div class="rules" id="regles" role="dialog" aria-modal="true" aria-labelledby="rules-title" hidden>
+  <div class="rules-top">
+    <div><div class="k">Règlement officiel FIP · 2026</div><h2 id="rules-title">Les règles du padel</h2></div>
+    <button class="rules-close" id="rules-close" aria-label="Fermer les règles"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+  <div class="rules-body">
+    <p class="rules-intro">Tout ce qu'il faut savoir pour jouer, du premier service au point décisif. Basé sur les règles de la Fédération Internationale de Padel, en vigueur depuis le 1er janvier 2026.</p>
+
+    <details open><summary><span class="n">01</span>L'essentiel en 30 secondes</summary><ul>
+      <li>On joue <b>à 2 contre 2</b> sur un terrain fermé par des vitres et du grillage.</li>
+      <li>Le service se fait <b>à la cuillère</b>, après un rebond, <b>en diagonale</b>.</li>
+      <li>La balle doit <b>rebondir une fois au sol</b> chez l'adversaire avant de toucher une vitre ou le grillage.</li>
+      <li>Après ce rebond, la balle peut toucher les vitres : on peut la jouer en sortie de vitre, avant le 2<sup>e</sup> rebond.</li>
+      <li>On compte comme au tennis : <b>15, 30, 40, jeu</b>. Un set se gagne en 6 jeux, un match en 2 sets gagnants.</li>
+    </ul></details>
+
+    <details><summary><span class="n">02</span>Le terrain et le matériel</summary><ul>
+      <li>Terrain de <b>20 m × 10 m</b>, entouré de vitres au fond et sur une partie des côtés, et de grillage.</li>
+      <li>Le filet mesure <b>88 cm au centre</b> et 92 cm sur les côtés.</li>
+      <li>Les lignes de service sont à <b>6,95 m du filet</b>, et une ligne centrale sépare les deux carrés de service.</li>
+      <li>Raquette : <b>45,5 cm maximum</b> de long, 26 cm de large, 38 mm d'épaisseur, avec une surface percée de trous.</li>
+      <li>La <b>dragonne est obligatoire</b> : la cordelette de la raquette se porte au poignet.</li>
+    </ul></details>
+
+    <details><summary><span class="n">03</span>Le service</summary><ul>
+      <li>Le serveur garde <b>au moins un pied derrière la ligne de service</b>, entre le prolongement de la ligne centrale et la vitre de côté, sans toucher les lignes.</li>
+      <li>Il fait <b>rebondir la balle au sol</b> de son côté. La balle ne doit pas passer la ligne de service avant d'être frappée <i>(nouveauté 2026)</i>.</li>
+      <li>Il frappe la balle <b>à hauteur de la taille ou plus bas</b>, avec au moins un pied au sol.</li>
+      <li>La balle part <b>en diagonale</b> et doit rebondir dans le carré de service adverse. Une balle sur la ligne est bonne.</li>
+      <li>On a <b>deux essais</b>. Deux fautes de suite = point perdu.</li>
+    </ul>
+    <h3>C'est une faute de service si…</h3><ul>
+      <li>la balle tombe hors du carré de service adverse ;</li>
+      <li>après son rebond dans le carré, la balle touche le <b>grillage</b> (la vitre, elle, est autorisée) ;</li>
+      <li>la balle touche le serveur ou son partenaire ;</li>
+      <li>le serveur rate la balle ou ne respecte pas la position.</li>
+    </ul>
+    <h3>Service à rejouer (let)</h3><ul>
+      <li>La balle touche le filet puis rebondit dans le bon carré : on rejoue.</li>
+      <li>Let sur le 1<sup>er</sup> service : on rejoue le point avec deux services. Let sur le 2<sup>e</sup> service : on rejoue seulement le 2<sup>e</sup>.</li>
+      <li>On rejoue aussi si le receveur n'était pas prêt.</li>
+    </ul></details>
+
+    <details><summary><span class="n">04</span>Le retour de service</summary><ul>
+      <li>Le receveur doit <b>laisser rebondir</b> la balle dans son carré, puis la frapper avant le 2<sup>e</sup> rebond. Pas de volée au retour.</li>
+      <li>Si la balle touche le receveur avant de rebondir, le point est pour le serveur.</li>
+      <li>L'ordre des receveurs est fixé au premier jeu de chaque set et ne change plus pendant ce set.</li>
+    </ul></details>
+
+    <details><summary><span class="n">05</span>Pendant l'échange : vitres et grillage</summary><ul>
+      <li>Chaque équipe frappe <b>une fois</b>, à tour de rôle. Les volées sont autorisées (sauf au retour de service).</li>
+      <li>La balle doit passer le filet et <b>rebondir d'abord au sol</b> chez l'adversaire.</li>
+      <li>Après ce rebond, elle peut toucher <b>vitres, grillage, filet</b>… L'adversaire peut la jouer tant qu'elle n'a pas rebondi deux fois au sol.</li>
+      <li>Tu peux te servir de <b>tes propres vitres</b> : frapper la balle contre ta vitre pour qu'elle repasse le filet est autorisé.</li>
+      <li>Si le club l'autorise (terrain avec zone de sécurité), tu peux <b>sortir du terrain</b> pour aller chercher une balle.</li>
+    </ul></details>
+
+    <details><summary><span class="n">06</span>Quand perd-on le point ?</summary><ul>
+      <li>La balle <b>rebondit deux fois</b> de ton côté.</li>
+      <li>Tu envoies la balle <b>directement sur les vitres ou le grillage adverses</b>, sans rebond au sol avant.</li>
+      <li>Tu envoies la balle dans <b>ton propre grillage</b> ou sur ton propre sol.</li>
+      <li>Toi ou ta raquette <b>touchez le filet</b>, les poteaux ou le côté adverse.</li>
+      <li>Tu frappes la balle <b>avant qu'elle ait passé le filet</b>.</li>
+      <li>La balle <b>te touche</b> (ou touche ton partenaire), ailleurs que sur la raquette.</li>
+      <li>Tu touches la balle deux fois, ou ton partenaire et toi la frappez tous les deux.</li>
+      <li>Tu <b>lances ta raquette</b> sur la balle, ou tu sautes par-dessus le filet.</li>
+      <li>Tu <b>lâches ta raquette</b> ou ta dragonne casse <i>(nouveauté 2026)</i>.</li>
+      <li>Tu fais une <b>double faute</b> au service.</li>
+    </ul>
+    <h3>Point gagné d'office</h3><ul>
+      <li>Après un rebond chez l'adversaire, la balle sort par un trou du grillage, reste coincée dedans, ou reste posée en haut d'une vitre.</li>
+    </ul></details>
+
+    <details><summary><span class="n">07</span>Compter les points</summary><ul>
+      <li>Points : <b>15, 30, 40, jeu</b>. À 40-40, c'est l'égalité.</li>
+      <li>Set : le premier à <b>6 jeux avec 2 d'écart</b>. À 6-6, on joue un <b>tie-break</b> : premier à 7 points avec 2 d'écart.</li>
+      <li>Match : en <b>2 sets gagnants</b>. On peut aussi décider d'un super tie-break en 10 points à la place du 3<sup>e</sup> set.</li>
+    </ul>
+    <h3>À 40-40, trois formules (à choisir avant le match)</h3><ul>
+      <li><b>Avantage</b> : il faut gagner deux points d'affilée, comme au tennis.</li>
+      <li><b>Star Point</b> <i>(nouveauté 2026)</i> : on joue les avantages. Si l'égalité revient une 3<sup>e</sup> fois, un seul point décisif donne le jeu.</li>
+      <li><b>Point en or</b> : à 40-40, un seul point décisif donne le jeu.</li>
+      <li>Pour le point décisif, c'est l'équipe qui reçoit qui choisit de quel côté elle reçoit.</li>
+    </ul></details>
+
+    <details><summary><span class="n">08</span>Changer de côté et pauses</summary><ul>
+      <li>On change de côté après le <b>1<sup>er</sup>, le 3<sup>e</sup> jeu</b>, puis après chaque jeu impair.</li>
+      <li>Dans un tie-break, on change de côté <b>tous les 6 points</b>.</li>
+      <li>Pause de <b>90 secondes</b> maximum aux changements de côté (pas de pause après le 1<sup>er</sup> jeu d'un set), et 2 minutes entre deux sets.</li>
+    </ul></details>
+
+    <details><summary><span class="n">09</span>Point à rejouer</summary><ul>
+      <li>On rejoue le point si la balle éclate, si une balle ou un objet entre sur le terrain, ou en cas d'interruption extérieure.</li>
+      <li>Une gêne involontaire de l'adversaire : on rejoue. Une gêne volontaire : point perdu.</li>
+    </ul></details>
+
+    <details><summary><span class="n">10</span>L'esprit Padelistes</summary><ul>
+      <li>Annonce toi-même tes fautes : en match amical, c'est le fair-play qui arbitre.</li>
+      <li>Attends la fin du point pour entrer ou traverser un terrain.</li>
+      <li>Échauffe-toi avant de jouer et porte des chaussures adaptées.</li>
+      <li>Félicite tes adversaires à la fin : on est là pour s'amuser.</li>
+    </ul></details>
+
+    <p class="rules-src">Source : <a href="https://www.padelfip.com/wp-content/uploads/2025/12/FIP_Rules-of-Padel.pdf" target="_blank" rel="noopener">Règles du padel de la Fédération Internationale de Padel (FIP), édition 2026</a>.</p>
+  </div>
+</div>
+</main>
+
+<footer><div class="wrap"><span>© 2026 Les Padelistes de Luminy · Association étudiante</span><span>Siège : l'Hexagone, campus de Luminy, Marseille</span></div></footer>
+
+<script>
+(() => {
+const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp=(x,a=0,b=1)=>x<a?a:x>b?b:x, lerp=(a,b,t)=>a+(b-a)*t;
+const add=(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]], sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],
+      mul=(a,s)=>[a[0]*s,a[1]*s,a[2]*s], dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],
+      cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],
+      norm=a=>{const l=Math.hypot(a[0],a[1],a[2])||1;return [a[0]/l,a[1]/l,a[2]/l]},
+      lerp3=(a,b,t)=>[lerp(a[0],b[0],t),lerp(a[1],b[1],t),lerp(a[2],b[2],t)];
+const sum=(...v)=>v.reduce(add,[0,0,0]);
+const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2, eOut=t=>1-Math.pow(1-t,3);
+const bump=(x,a,b)=>x<=a||x>=b?0:Math.sin(Math.PI*(x-a)/(b-a));
+let seed=7; const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
+const R=(a,b)=>a+Math.random()*(b-a);
+const UP=[0,1,0];
+
+/* ============ CANVAS / CAMERA ============ */
+const cv=document.getElementById('scene'), ctx=cv.getContext('2d');
+let W=0,H=0,DPR=1;
+function resize(){DPR=Math.min(devicePixelRatio||1,2);W=cv.clientWidth;H=cv.clientHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);ctx.lineCap='round';ctx.lineJoin='round'}
+addEventListener('resize',resize);resize();
+
+const NEAR=.15, cam={pos:[0,10,-20],tgt:[0,0,0],fov:50,f:[0,0,1],r:[1,0,0],u:[0,1,0],F:500};
+function setCam(){cam.f=norm(sub(cam.tgt,cam.pos));cam.r=norm(cross(cam.f,UP));cam.u=cross(cam.r,cam.f);
+  cam.F=(Math.min(W*1.35,H)/2)/Math.tan(cam.fov*Math.PI/360)}
+const zOf=p=>dot(sub(p,cam.pos),cam.f);
+function P(p){const d=sub(p,cam.pos),z=dot(d,cam.f);return [W/2+dot(d,cam.r)/z*cam.F,H/2-dot(d,cam.u)/z*cam.F,z]}
+function cut(a,b){const za=zOf(a),zb=zOf(b);return lerp3(a,b,(NEAR-za)/(zb-za))}
+function clipPoly(pts){const o=[];for(let i=0;i<pts.length;i++){const c=pts[i],p=pts[(i+pts.length-1)%pts.length],zc=zOf(c),zp=zOf(p);
+  if(zc>=NEAR){if(zp<NEAR)o.push(cut(p,c));o.push(c)}else if(zp>=NEAR)o.push(cut(p,c))}return o.map(P)}
+function clipSeg(a,b){let za=zOf(a),zb=zOf(b);if(za<NEAR&&zb<NEAR)return null;if(za<NEAR)a=cut(a,b);else if(zb<NEAR)b=cut(b,a);return [P(a),P(b)]}
+function path(sp){ctx.beginPath();sp.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath()}
+function line(a,b,style,wWorld,minW=.6){const s=clipSeg(a,b);if(!s)return;const z=(s[0][2]+s[1][2])/2;
+  ctx.strokeStyle=style;ctx.lineWidth=Math.max(minW,wWorld*cam.F/z);ctx.beginPath();ctx.moveTo(s[0][0],s[0][1]);ctx.lineTo(s[1][0],s[1][1]);ctx.stroke()}
+function dot3(p,rW,fill){const q=P(p);if(q[2]<NEAR)return;ctx.fillStyle=fill;ctx.beginPath();ctx.arc(q[0],q[1],Math.max(1,rW*cam.F/q[2]),0,7);ctx.fill()}
+const bil=(q,u,v)=>lerp3(lerp3(q[0],q[1],u),lerp3(q[3],q[2],u),v);
+
+/* Camera keyframes (p = scroll progress 0..1) */
+const K=[
+ {p:0,    pos:[15,21,-24],   tgt:[0,0,0],      fov:50},
+ {p:.08,  pos:[11,13,-19],   tgt:[0,0,0],      fov:50},
+ {p:.16,  pos:[-6,9,-17],    tgt:[0,.3,0],     fov:50},
+ {p:.22,  pos:[-3.5,5,-17],  tgt:[0,1,0],      fov:52},
+ {p:.29,  pos:[1.5,1.9,-13.8],tgt:[0,1.2,3],   fov:56},
+ {p:.38,  pos:[-1.8,1.5,-12],tgt:[0,1.2,4],    fov:54},
+ {p:.46,  pos:[7.6,2.1,-3],  tgt:[1,1.1,-5.5], fov:54},
+ {p:.55,  pos:[6.2,1.8,-9],  tgt:[1,1.3,-6],   fov:54},
+ {p:.653, pos:[2.2,2.8,-.8], tgt:[-.4,2.5,-4.4],fov:54},
+ {p:.685, pos:[4.2,3.4,-3.5],tgt:[1.4,.8,5.6], fov:56},
+ {p:.71,  pos:[3.6,1.9,3.6], tgt:[2,1.8,9.6],  fov:50},
+ {p:.77,  pos:[-9,5,8],      tgt:[0,.5,0],     fov:50},
+ {p:.81,  pos:[-5.5,2.1,-12],tgt:[0,1.1,2],     fov:54},
+ {p:.85,  pos:[4.5,2.3,-12.5],tgt:[0,1.2,3],    fov:54},
+ {p:.895, pos:[-2,20,-6],    tgt:[0,0,0],      fov:50},
+ {p:.94,  pos:[0,25,-2.6],   tgt:[0,0,.3],     fov:48},
+ {p:1,    pos:[0,26,-2.4],   tgt:[0,0,.3],     fov:48}];
+const cr=(a,b,c,d,t)=>.5*(2*b+(-a+c)*t+(2*a-5*b+4*c-d)*t*t+(-a+3*b-3*c+d)*t*t*t);
+const cr3=(a,b,c,d,t)=>[0,1,2].map(i=>cr(a[i],b[i],c[i],d[i],t));
+function camAt(p){let i=0;while(i<K.length-2&&p>K[i+1].p)i++;
+  const a=K[Math.max(0,i-1)],b=K[i],c=K[i+1],d=K[Math.min(K.length-1,i+2)],t=clamp((p-b.p)/(c.p-b.p));
+  return {pos:cr3(a.pos,b.pos,c.pos,d.pos,t),tgt:cr3(a.tgt,b.tgt,c.tgt,d.tgt,t),fov:lerp(b.fov,c.fov,t)}}
+
+/* ============ WORLD ============ */
+const panels=[];
+for(const s of[-1,1]){
+  for(let i=0;i<5;i++){const x0=-5+i*2;panels.push({k:'g',q:[[x0,0,s*10],[x0+2,0,s*10],[x0+2,3,s*10],[x0,3,s*10]]})}
+  panels.push({k:'m',q:[[-5,3,s*10],[5,3,s*10],[5,4,s*10],[-5,4,s*10]]});
+  for(const x of[-5,5]){
+    panels.push({k:'g',q:[[x,0,s*10],[x,0,s*8],[x,3,s*8],[x,3,s*10]]});
+    panels.push({k:'g',q:[[x,0,s*8],[x,0,s*6],[x,2,s*6],[x,2,s*8]]});
+    panels.push({k:'m',q:[[x,0,s*6],[x,0,s*2],[x,3,s*2],[x,3,s*6]]});
+  }
+}
+for(const x of[-5,5])panels.push({k:'m',q:[[x,0,-2],[x,0,2],[x,3,2],[x,3,-2]]});
+panels.forEach(p=>{p.c=mul(add(add(p.q[0],p.q[1]),add(p.q[2],p.q[3])),.25);p.ang=Math.atan2(p.c[0],-p.c[2])});
+panels.sort((a,b)=>a.ang-b.ang).forEach((p,i)=>p.ord=i/panels.length);
+const lamps=[[-6.4,10.8],[6.4,10.8],[-6.4,-10.8],[6.4,-10.8]].map(([x,z],i)=>({base:[x,0,z],top:[x,6.6,z],head:[x*.88,6.5,z*.95],i}));
+const COURT_LINES=[[[-5,.002,-6.95],[5,.002,-6.95]],[[-5,.002,6.95],[5,.002,6.95]],[[0,.002,-6.95],[0,.002,6.95]],[[-.2,.002,-10],[.2,.002,-10]],[[-.2,.002,10],[.2,.002,10]]];
+const ridge=[];for(let i=0;i<=120;i++){const a=i/120*Math.PI*2;const h=22+16*Math.sin(i*.31)+11*Math.sin(i*.97+1)+rnd()*9+(Math.sin(a*2+.6)>.55?-14:0);
+  ridge.push([Math.cos(a)*330,Math.max(4,h),Math.sin(a)*330])}
+const stars=[];for(let i=0;i<180;i++){const th=rnd()*Math.PI*2,ph=.06+rnd()*1.35;stars.push({d:[Math.cos(ph)*Math.cos(th),Math.sin(ph),Math.cos(ph)*Math.sin(th)],s:rnd()*1.3+.3,tw:rnd()*6})}
+const dust=[];for(let i=0;i<110;i++)dust.push({b:[R(-7,7),R(0,6),R(-12,12)],ph:R(0,6.28)});
+
+/* ============ PLAYERS (2 v 2) ============ */
+const PL=[
+ {team:-1,home:[-2.4,-7.2],shirt:'#D9F24A',shorts:'#0B2A5A'},
+ {team:-1,home:[ 2.4,-7.2],shirt:'#D9F24A',shorts:'#0B2A5A'},
+ {team: 1,home:[-2.4, 7.2],shirt:'#F4F7FB',shorts:'#1656B8'},
+ {team: 1,home:[ 2.4, 7.2],shirt:'#F4F7FB',shorts:'#1656B8'}];
+PL.forEach((p,i)=>{p.x=p.home[0];p.z=p.home[1];p.tx=p.x;p.tz=p.z;p.hitAt=-99;p.kind='fore';p.ph=i*1.7;p.walk=0;p.speed=0;p.mv=[1,0,0];p.ap=1;
+  p.si=[0,2,1,3][i];p.hi=[0,1,2,3][i];p.num=['7','10','3','21'][i];p.band=i===1||i===2;p.rk=p.team<0?'#F4F7FB':'#D9F24A';p.sm=i;
+  p.f=[0,0,-p.team];p.r=norm(cross(p.f,UP))});
+
+/* ============ BALL / RALLY ============ */
+const BR=.1; let S=0;
+const rally={segs:[],i:0,t:0,side:1};
+function assign(C,side,dur){
+  const team=PL.filter(p=>p.team===side),hit=C[0]<0?team.find(p=>p.home[0]<0):team.find(p=>p.home[0]>0),mate=team.find(p=>p!==hit);
+  hit.tx=clamp(C[0]-hit.r[0]*.78,-4.6,4.6);hit.tz=C[2]-hit.f[2]*.38;hit.hitAt=S+dur;hit.kind=C[1]>1.75?'over':'fore';
+  mate.tx=mate.home[0]*.85+C[0]*.2;mate.tz=mate.home[1]*(.9+Math.random()*.1);
+  PL.filter(p=>p.team!==side).forEach(p=>{p.tx=p.home[0]+R(-.6,.6);p.tz=p.home[1]*R(.75,1)})}
+function plan(from,side){
+  const volley=Math.random()<.25;
+  const C=[R(-3.8,3.8),volley?R(1.6,2.1):R(.9,1.4),side*(volley?R(3.4,4.6):R(6.4,8.4))];
+  let s;
+  if(volley){s=[{A:from,B:C,h:R(.5,1),d:R(.75,.95)}]}
+  else{const G=[lerp(from[0],C[0],.65),BR,side*R(2.4,5.2)];s=[{A:from,B:G,h:R(1.1,1.9),d:R(.6,.8),ev:'g'}];
+    if(Math.random()<.4){const Wp=[lerp(G[0],C[0],.6),R(1.3,2.2),side*9.9],D=[C[0],R(.9,1.3),side*R(6.2,7.4)];
+      s.push({A:G,B:Wp,h:.4,d:.34,ev:'w'},{A:Wp,B:D,h:.35,d:.42})}else s.push({A:G,B:C,h:R(.6,1),d:.45})}
+  assign(s[s.length-1].B,side,s.reduce((a,x)=>a+x.d,0));
+  return s}
+rally.segs=plan([-2,1.1,-7],1);
+const impacts=[];
+function stepRally(dt){rally.t+=dt;let s=rally.segs[rally.i];
+  while(rally.t>s.d){rally.t-=s.d;if(s.ev)impacts.push({p:s.B,k:s.ev,t:0});rally.i++;
+    if(rally.i>=rally.segs.length){rally.side*=-1;rally.segs=plan(s.B,rally.side);rally.i=0}s=rally.segs[rally.i]}
+  const u=rally.t/s.d;return add(lerp3(s.A,s.B,u),[0,4*s.h*u*(1-u),0])}
+/* scroll-driven smash */
+const HIT=[-.5,2.72,-4.3];
+const SM=[{a:0,b:.4,A:[.6,.9,4],B:HIT,h:2.2},{a:.4,b:.58,A:HIT,B:[1.4,BR,5.6],h:.05},
+          {a:.58,b:.76,A:[1.4,BR,5.6],B:[2.1,2.4,9.9],h:.5},{a:.76,b:1,A:[2.1,2.4,9.9],B:[2.8,BR,5.2],h:1.1}];
+function smashAt(u){const s=SM.find(s=>u<=s.b)||SM[3],k=clamp((u-s.a)/(s.b-s.a));return add(lerp3(s.A,s.B,k),[0,4*s.h*k*(1-k),0])}
+const trail=[];
+
+/* ============ DRAW HELPERS ============ */
+function ring(c,r,plane,style,w){const pts=[];for(let i=0;i<=32;i++){const a=i/32*Math.PI*2;
+  pts.push(plane==='y'?[c[0]+Math.cos(a)*r,.01,c[2]+Math.sin(a)*r]:[c[0]+Math.cos(a)*r,c[1]+Math.sin(a)*r,c[2]-.02])}
+  for(let i=0;i<32;i++)line(pts[i],pts[i+1],style,w,1)}
+/* ---------- shading / anatomy helpers ---------- */
+const MAT={
+ skin:[['#F3CFAA','#D9A47B','#8E5E3F'],['#C99064','#A66E45','#5E3A22'],['#8E5C3C','#6B4229','#3A2214'],['#EFC39B','#D09A70','#87593A']],
+ hair:[['#5A4030','#2E1F15','#120B07'],['#3A3430','#161312','#000000'],['#E8C57E','#C49A52','#7A5D2E'],['#6B3E22','#43240F','#1C0D04']],
+ shirtA:['#EAF77E','#C3D936','#5E6E0E'], shirtB:['#FFFFFF','#DCE3EE','#7C889C'],
+ shortsA:['#33589A','#14316B','#06173A'], shortsB:['#4A86E0','#1D5BC0','#0A2C6A'],
+ shoe:['#FFFFFF','#E9EDF3','#9FA9B8'], sole:['#5B6577','#2C3340','#11151C'], sock:['#FFFFFF','#F1F4F8','#B8C1CE'],
+ grip:['#FFFFFF','#E8ECF2','#9AA4B4'], carbon:['#454C5C','#1C212B','#05070A'], cap:['#4A5060','#20242D','#000000']};
+function jac(p,ax){const a=P(p),b=P(add(p,mul(ax,.05)));return [(b[0]-a[0])/.05,(b[1]-a[1])/.05]}
+function capsule(A,B,rA,rB,m,ax){
+  const s=clipSeg(A,B);if(!s)return;const a=s[0],b=s[1];
+  let dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy);if(L<.01){dx=1;dy=0;L=1}
+  const sx=dx/L,sy=dy/L,nx=-sy,ny=sx;let hwA,hwB;
+  if(ax){const hw=(p,k)=>{const jr=jac(p,ax.r),jf=jac(p,ax.f);return Math.hypot(k[0]*(jr[0]*nx+jr[1]*ny),k[1]*(jf[0]*nx+jf[1]*ny))};hwA=hw(A,ax.kA);hwB=hw(B,ax.kB)}
+  else{hwA=rA*cam.F/a[2];hwB=rB*cam.F/b[2]}
+  hwA=Math.max(.6,hwA);hwB=Math.max(.6,hwB);const an=Math.atan2(ny,nx);
+  ctx.beginPath();ctx.moveTo(a[0]+nx*hwA,a[1]+ny*hwA);ctx.lineTo(b[0]+nx*hwB,b[1]+ny*hwB);
+  ctx.arc(b[0],b[1],hwB,an,an-Math.PI,true);ctx.lineTo(a[0]-nx*hwA,a[1]-ny*hwA);ctx.arc(a[0],a[1],hwA,an+Math.PI,an,true);ctx.closePath();
+  const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,hw=(hwA+hwB)/2,sg=ny>0?-1:1;
+  const g=ctx.createLinearGradient(mx+nx*hw*sg,my+ny*hw*sg,mx-nx*hw*sg,my-ny*hw*sg);
+  g.addColorStop(0,m[0]);g.addColorStop(.42,m[1]);g.addColorStop(1,m[2]);ctx.fillStyle=g;ctx.fill()}
+function sphere(c,r,m){const q=P(c);if(q[2]<NEAR)return null;const rr=Math.max(1,r*cam.F/q[2]);
+  const g=ctx.createRadialGradient(q[0]-rr*.35,q[1]-rr*.45,rr*.1,q[0],q[1],rr);g.addColorStop(0,m[0]);g.addColorStop(.55,m[1]);g.addColorStop(1,m[2]);
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(q[0],q[1],rr,0,7);ctx.fill();return [q,rr]}
+function ik(root,tgt,l1,l2,hint){let d=sub(tgt,root),L=Math.hypot(d[0],d[1],d[2]);const mx=(l1+l2)*.995;
+  if(L<1e-3){d=[0,-1,0];L=1e-3}if(L>mx){tgt=add(root,mul(d,mx/L));d=sub(tgt,root);L=mx}
+  const dir=mul(d,1/L),a=(l1*l1-l2*l2+L*L)/(2*L),h=Math.sqrt(Math.max(0,l1*l1-a*a));
+  const pp=norm(sub(hint,mul(dir,dot(hint,dir))));return {mid:sum(root,mul(dir,a),mul(pp,h)),end:tgt}}
+
+/* ---------- padel racket (FIP dims: 45.5 cm, 26 cm wide, 38 mm thick, 9-13 mm holes) ---------- */
+const RK={grip:.06,headBase:.17,headLen:.285,W:.26,T:.038};
+const RO=(()=>{const o=[];for(let k=0;k<44;k++){const th=k/44*Math.PI*2,c=Math.cos(th),sn=Math.sin(th);
+  const sq=Math.sign(c)*Math.pow(Math.abs(c),.8),taper=1-.24*(1-sn)/2;o.push([RK.headBase+RK.headLen/2*(1+sn),RK.W/2*sq*taper])}return o})();
+const HC=RK.headBase+RK.headLen/2;
+const HOLES=(()=>{const h=[];let row=0;for(let u=.205;u<.44;u+=.023,row++)for(let v=-.12;v<=.12;v+=.023){const vv=v+(row%2?.0115:0);
+  const cu=(u-HC)/(RK.headLen/2*.8),cv=vv/(RK.W/2*.76*(1-.2*(1-(u-HC)/(RK.headLen/2))/2));if(cu*cu+cv*cv<=1)h.push([u,vv])}return h})();
+function racket(hand,a,b,s=1,acc='#D9F24A'){
+  const n=norm(cross(a,b)),butt=sub(hand,mul(a,RK.grip*s));
+  const Wp=(u,v,d=0)=>sum(butt,mul(a,u*s),mul(b,v*s),mul(n,d*s));
+  const side=dot(n,sub(cam.pos,hand))>0?1:-1,fr=RK.T/2*side;
+  const hc=P(Wp(HC,0,fr));if(hc[2]<NEAR)return;const rr=RK.W/2*s*cam.F/hc[2];
+  if(rr>10)capsule(Wp(0,0),sub(Wp(0,0),[0,.09*s,0]),.004*s,.004*s,['#2A2F3A','#11141A','#000']);   // wrist cord
+  capsule(Wp(.004,0),Wp(.155,0),.0175*s,.016*s,MAT.grip);                       // overgrip
+  capsule(Wp(-.006,0),Wp(.006,0),.021*s,.021*s,MAT.cap);                         // butt cap
+  capsule(Wp(.15,-.014),Wp(.218,-.08),.011*s,.013*s,MAT.carbon);                  // throat arms (open bridge)
+  capsule(Wp(.15,.014),Wp(.218,.08),.011*s,.013*s,MAT.carbon);
+  let sp=clipPoly(RO.map(([u,v])=>Wp(u,v,-fr)));if(sp.length>2){path(sp);ctx.fillStyle='#07090E';ctx.fill()}   // back face = 38 mm depth
+  sp=clipPoly(RO.map(([u,v])=>Wp(u,v,fr)));if(sp.length<3)return;
+  path(sp);let g=ctx.createLinearGradient(hc[0]-rr,hc[1]-rr,hc[0]+rr,hc[1]+rr);g.addColorStop(0,'#323A4A');g.addColorStop(.5,'#161B25');g.addColorStop(1,'#0A0D14');ctx.fillStyle=g;ctx.fill();
+  ctx.save();path(sp);ctx.clip();
+  const band=(u0,u1,u2,u3,col)=>{const p=clipPoly([Wp(u0,-.16,fr),Wp(u1,-.16,fr),Wp(u2,.16,fr),Wp(u3,.16,fr)]);if(p.length>2){path(p);ctx.fillStyle=col;ctx.fill()}};
+  band(.33,.40,.28,.21,acc);band(.405,.42,.30,.285,'rgba(255,255,255,.85)');
+  if(rr>14){g=ctx.createLinearGradient(hc[0]-rr,hc[1]-rr*1.2,hc[0]+rr*.4,hc[1]+rr);g.addColorStop(0,'rgba(255,255,255,.22)');g.addColorStop(.35,'rgba(255,255,255,0)');ctx.fillStyle=g;ctx.fillRect(hc[0]-rr*1.5,hc[1]-rr*1.5,rr*3,rr*3)}
+  if(rr>16){ctx.fillStyle='rgba(2,4,8,.92)';const hr=.0055;
+    for(const [u,v] of HOLES){const c=P(Wp(u,v,fr)),ea=P(Wp(u+hr,v,fr)),eb=P(Wp(u,v+hr,fr));const ax=[ea[0]-c[0],ea[1]-c[1]],bx=[eb[0]-c[0],eb[1]-c[1]];
+      ctx.beginPath();for(let k=0;k<8;k++){const t=k/8*Math.PI*2,x=c[0]+ax[0]*Math.cos(t)+bx[0]*Math.sin(t),y=c[1]+ax[1]*Math.cos(t)+bx[1]*Math.sin(t);k?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.fill()}}
+  else if(rr>7){ctx.fillStyle='rgba(2,4,8,.6)';for(let i=0;i<HOLES.length;i+=3){const c=P(Wp(HOLES[i][0],HOLES[i][1],fr));ctx.fillRect(c[0]-.6,c[1]-.6,1.2,1.2)}}
+  ctx.restore();
+  path(sp);ctx.strokeStyle='#C7D0DE';ctx.lineWidth=Math.max(1,.012*s*cam.F/hc[2]);ctx.stroke();                 // frame rim
+  if(rr>12){const ip=clipPoly(RO.map(([u,v])=>Wp(HC+(u-HC)*.93,v*.93,fr)));if(ip.length>2){path(ip);ctx.strokeStyle=acc;ctx.lineWidth=Math.max(.6,.004*s*cam.F/hc[2]);ctx.stroke()}}}
+function ball3(b,r=BR){const s=P(b);if(s[2]<NEAR)return;const rr=Math.max(2,r*cam.F/s[2]);
+  ctx.globalCompositeOperation='lighter';let g=ctx.createRadialGradient(s[0],s[1],0,s[0],s[1],rr*5);
+  g.addColorStop(0,'rgba(217,242,74,.42)');g.addColorStop(1,'rgba(217,242,74,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(s[0],s[1],rr*5,0,7);ctx.fill();
+  ctx.globalCompositeOperation='source-over';g=ctx.createRadialGradient(s[0]-rr*.35,s[1]-rr*.35,rr*.1,s[0],s[1],rr);
+  g.addColorStop(0,'#FAFFB8');g.addColorStop(.6,'#D2EA3C');g.addColorStop(1,'#8DA218');ctx.fillStyle=g;ctx.beginPath();ctx.arc(s[0],s[1],rr,0,7);ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=Math.max(.6,rr*.12);ctx.beginPath();ctx.arc(s[0]+rr*.5,s[1],rr*.8,2.1,4.2);ctx.stroke()}
+
+/* ---------- player pose ---------- */
+function pose(pl,ballPos){
+  const f=pl.f,r=pl.r,d=S-pl.hitAt,over=pl.kind==='over',k=1-Math.exp(-DT*9);
+  const swT=REDUCE?0:clamp((d+.6)/.18)*clamp((.85-d)/.25);
+  pl.sw=lerp(pl.sw||0,swT,k*1.6>1?1:k*1.6);const sw=Math.max(pl.sw,swT*.9);
+  const jump=over?(pl.jumpBig||.28)*Math.pow(bump(d,-.35,.32),.8):0;
+  const spd=Math.min(1.4,pl.speed/4);
+  const breathe=REDUCE?0:.008*Math.sin(S*2.3+pl.ph);
+  const hop=REDUCE?0:.025*Math.max(0,Math.sin(S*5.2+pl.ph))*(1-spd)*(1-sw);
+  pl.cS=lerp(pl.cS??.5,clamp(.5+spd*.25+(over?-.4:.2)*sw,0,1),k);const c=pl.cS;
+  const sway=Math.sin(pl.walk)*.035*Math.min(1,spd);
+  const base=[pl.x,jump+hop,pl.z];
+  let tw=0,aD,oD;
+  if(over){let al;if(d<-.5)al=.7;else if(d<-.15)al=lerp(.7,-2.1,eOut((d+.5)/.35));else if(d<.15)al=lerp(-2.1,1.9,ease((d+.15)/.3));else al=lerp(1.9,.7,eOut(clamp((d-.15)/.55)));
+    tw=-.75*bump(d,-.6,0)+.5*bump(d,0,.65);aD=norm(sum(mul(UP,Math.cos(al)),mul(f,Math.sin(al)),mul(r,.2)));
+    oD=d<0?norm(sum(mul(UP,.9),mul(f,.35),mul(r,-.15))):norm(sum(mul(UP,-.6),mul(f,.45),mul(r,-.35)))}
+  else{let be,v=.35;if(d<-.45)be=1.2;else if(d<-.12){be=lerp(1.2,-.8,eOut((d+.45)/.33));v=.27}else if(d<.18){be=lerp(-.8,2.5,ease((d+.12)/.3));v=.16}else be=lerp(2.5,1.3,eOut(clamp((d-.18)/.55)));
+    tw=clamp((be-.6)*.55,-.95,.8);aD=norm(sum(mul(f,Math.sin(be)),mul(r,Math.cos(be)),mul(UP,v)));
+    oD=norm(sum(mul(f,.75),mul(r,-.5+.55*clamp((d+.1)/.4)),mul(UP,-.05)))}
+  pl.twS=lerp(pl.twS||0,tw*sw,k*1.4>1?1:k*1.4);tw=pl.twS;
+  const rs=add(mul(r,Math.cos(tw)),mul(f,Math.sin(tw))),fs=sub(mul(f,Math.cos(tw)),mul(r,Math.sin(tw)));
+  const tp=-tw*.4,rp=add(mul(r,Math.cos(tp)),mul(f,Math.sin(tp)));          // pelvis counter-rotates
+  const mv=pl.mv,lean=mul(mv,Math.min(.16,spd*.12)),Y=pl.ap;
+  const hip=sum(base,[0,(.94-.18*c+breathe*.3)*Y,0],mul(f,-.06*c),mul(r,sway));
+  const chest=sum(hip,[0,(.47+breathe)*Y,0],mul(fs,.16*c),lean);
+  const neck=add(chest,[0,.075*Y,0]);
+  let look=f;if(ballPos){const lv=[ballPos[0]-pl.x,0,ballPos[2]-pl.z];if(Math.hypot(lv[0],lv[2])>.6){const ln=norm(lv);if(dot(ln,f)>.05)look=norm(lerp3(f,ln,.8))}}
+  pl.lookS=norm(lerp3(pl.lookS||look,look,k));look=pl.lookS;
+  let ty=0;if(ballPos)ty=clamp((ballPos[1]-1.6)/4,-.15,.45);
+  const head=sum(neck,[0,.14*Y,0],mul(fs,.03),mul(look,.01));
+  const shR=sum(chest,mul(rs,.175),[0,-.015,0]),shL=sum(chest,mul(rs,-.175),[0,-.015,0]);
+  // legs: plant feet, step in on the swing
+  const st=Math.min(.32,pl.speed*.085),lf=Math.min(.14,pl.speed*.035);
+  const legs=[1,-1].map(sg=>{const phs=pl.walk+(sg>0?0:Math.PI);
+    const stepIn=(sg<0&&!over)?mul(f,.22*sw):[0,0,0];
+    const fp=sum([pl.x,jump,pl.z],mul(r,sg*(.2+.07*c)),mul(mv,Math.sin(phs)*st),stepIn,[0,Math.max(0,Math.cos(phs))*lf+.08,0]);
+    const hj=add(hip,mul(rp,sg*.095));const kk=ik(hj,fp,.45,.44,norm(sum(f,mul(r,sg*.25),[0,.05,0])));
+    const fd=norm(sum(f,mul(r,sg*.3),mul(mv,.3*Math.min(1,spd))));return {hj,knee:kk.mid,ank:kk.end,fd,lift:Math.max(0,Math.cos(phs))*lf}});
+  // arms: ready position, pumping when running, full swing
+  const pump=Math.sin(pl.walk)*Math.min(1,spd)*(1-sw);
+  const restR=sum(chest,mul(f,.33+.06*pump),mul(r,.09),[0,-.16,0]),restA=norm(sum(mul(UP,.85),mul(f,.4),mul(r,.12)));
+  const swH=add(shR,mul(aD,.54)),swA=norm(sum(aD,mul(UP,over?0:.32),mul(fs,over?.12:.16)));
+  const hR=lerp3(restR,swH,sw),aR=norm(lerp3(restA,swA,sw));
+  const restL=lerp3(sum(restR,mul(restA,.16),mul(r,-.07)),sum(shL,mul(f,-.25*pump+.15),[0,-.42,0]),Math.min(1,spd)*(1-sw));
+  const hL=lerp3(restL,add(shL,mul(oD,.52)),sw);
+  const armR=ik(shR,hR,.3,.28,norm(sum(mul(UP,-1),mul(f,-.35),mul(r,.4)))),armL=ik(shL,hL,.3,.28,norm(sum(mul(UP,-1),mul(f,-.25),mul(r,-.4))));
+  return {base,hip,chest,neck,head,shR,shL,legs,armR,armL,aR,rs,fs,rp,look,ty,c,sw,d}}
+
+/* face & hair */
+function drawHead(pl,J,sk,hr){
+  const hc=J.head,look=J.look,side=norm(cross(look,UP)),up=UP,toCam=sub(cam.pos,hc);
+  const fw=dot(norm(toCam),look),sideVis=dot(norm(toCam),side);
+  const q0=P(hc);if(q0[2]<NEAR)return;const rr=.09*cam.F/q0[2];
+  // back hair volume
+  sphere(sum(hc,mul(up,.02),mul(look,-.025)),.096,hr);
+  // ears
+  if(rr>5)for(const sg of[1,-1]){if(sg*sideVis>-.2)sphere(sum(hc,mul(side,sg*.088),mul(look,-.005),mul(up,-.008)),.02,sk)}
+  // jaw + skull
+  sphere(sum(hc,mul(look,.03),mul(up,-.045)),.064,sk);
+  const H=sphere(add(hc,mul(look,.01)),.088,sk);if(!H)return;const [q,R]=H;
+  // fringe / hairline cap
+  ctx.save();ctx.beginPath();ctx.arc(q[0],q[1],R+.6,0,7);ctx.clip();
+  const cdir=norm(add(mul(up,.9),mul(look,-.42)));let e1=norm(cross(cdir,UP));if(Math.hypot(...e1)<.5||!isFinite(e1[0]))e1=side;const e2=cross(cdir,e1);
+  const pts=[];for(let i=0;i<28;i++){const t=i/28*Math.PI*2,wob=1+.05*Math.sin(t*5+pl.ph);pts.push(sum(hc,mul(cdir,.09*Math.cos(1.1)),mul(e1,.094*Math.sin(1.1)*Math.cos(t)*wob),mul(e2,.094*Math.sin(1.1)*Math.sin(t)*wob)))}
+  const cap=clipPoly(pts),facing=dot(cdir,toCam)>0;
+  if(cap.length>2){const g=ctx.createLinearGradient(q[0],q[1]-R,q[0],q[1]+R*.3);g.addColorStop(0,hr[0]);g.addColorStop(.6,hr[1]);g.addColorStop(1,hr[2]);ctx.fillStyle=g;
+    if(facing){path(cap);ctx.fill()}}
+  // facial features (only when big enough & facing)
+  if(rr>6&&fw>-.05){const a=clamp((fw+.05)/.4);ctx.globalAlpha*=a;
+    const F=(o)=>sum(hc,mul(look,o[0]),mul(up,o[1]),mul(side,o[2]));
+    for(const sg of[1,-1]){const e=P(F([.088,.008,sg*.036]));if(e[2]>NEAR){const er=Math.max(.6,.0055*cam.F/e[2]);ctx.fillStyle='rgba(27,20,15,.9)';ctx.beginPath();ctx.ellipse(e[0],e[1],er*1.25,er*.75,0,0,7);ctx.fill()}
+      line(F([.086,.03,sg*.022]),F([.08,.033,sg*.048]),hr[2],.005,.5)}
+    sphere(F([.094,-.016,0]),.013,[sk[0],sk[1],sk[2]]);
+    line(F([.082,-.047,-.017]),F([.082,-.047,.017]),'rgba(120,60,50,.7)',.004,.5);
+    const g=ctx.createRadialGradient(q[0],q[1]+R*.6,0,q[0],q[1]+R*.6,R);g.addColorStop(0,'rgba(0,0,0,.12)');g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.fillRect(q[0]-R,q[1],R*2,R*1.2);
+    ctx.globalAlpha/=a||1}
+  // sweatband
+  if(pl.band){const bp=[];for(let i=0;i<=24;i++){const t=i/24*Math.PI*2;bp.push(sum(hc,[0,.035,0],mul(side,.09*Math.cos(t)),mul(look,.09*Math.sin(t)+.01)))}
+    for(let i=0;i<24;i++){const m=lerp3(bp[i],bp[i+1],.5);if(dot(sub(m,hc),toCam)>0)line(bp[i],bp[i+1],'#FFFFFF',.024,1)}}
+  // soft top light
+  const g=ctx.createRadialGradient(q[0]-R*.35,q[1]-R*.55,0,q[0],q[1],R*1.15);g.addColorStop(0,'rgba(255,255,255,.16)');g.addColorStop(1,'rgba(0,10,30,.28)');ctx.fillStyle=g;ctx.fillRect(q[0]-R,q[1]-R,R*2,R*2);
+  ctx.restore()}
+
+function drawPlayer(pl,ap,ballPos){
+  pl.ap=ap;const J=pose(pl,ballPos),sk=MAT.skin[pl.si],hr=MAT.hair[pl.hi],shirt=pl.team<0?MAT.shirtA:MAT.shirtB,shorts=[MAT.shortsA,['#3A3F4A','#1A1D24','#050608'],MAT.shortsB,['#3A3F4A','#1A1D24','#050608']][pl.sm],dk=[shirt[2],shirt[2],shirt[2]];
+  // ground contact shadows
+  const sh=(p,rad,al)=>{const q=P([p[0],.004,p[2]]);if(q[2]<NEAR)return;const rr=rad*cam.F/q[2];ctx.save();ctx.translate(q[0],q[1]);ctx.scale(1,Math.max(.2,-cam.f[1]));
+    const g=ctx.createRadialGradient(0,0,0,0,0,rr);g.addColorStop(0,`rgba(0,0,0,${al})`);g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,rr,0,7);ctx.fill();ctx.restore()};
+  const air=clamp(J.base[1]/.5);sh([J.hip[0],0,J.hip[2]],.6*(1-air*.3),.42*ap*(1-air*.5));J.legs.forEach(l=>sh(l.ank,.16,.45*ap*(1-air)*(1-l.lift*5)));
+  ctx.globalAlpha=ap;
+  const leg=l=>{const T=t=>lerp3(l.hj,l.knee,t),C=t=>lerp3(l.knee,l.ank,t);
+    capsule(T(.25),l.knee,.078,.056,sk);                                     // quad
+    capsule(l.hj,T(.5),.1,.094,shorts);                                       // flared shorts leg
+    capsule(l.knee,C(.32),.054,.062,sk);capsule(C(.3),C(.75),.06,.04,sk);     // calf bulge -> ankle
+    capsule(C(.7),l.ank,.042,.039,MAT.sock);
+    const heel=sub(l.ank,mul(l.fd,.055)),toe=add(l.ank,mul(l.fd,.175));
+    capsule(add(heel,[0,-.062,0]),add(toe,[0,-.066,0]),.032,.028,MAT.sole);
+    capsule(add(heel,[0,-.035,0]),add(toe,[0,-.045,0]),.047,.034,MAT.shoe);
+    capsule(add(l.ank,[0,-.02,0]),add(lerp3(l.ank,toe,.6),[0,-.03,0]),.028,.022,pl.team<0?MAT.shortsA:MAT.shortsB)};
+  const arm=(sh0,A,racketArm)=>{const el=A.mid,hd=A.end,U=t=>lerp3(sh0,el,t),Fa=t=>lerp3(el,hd,t);
+    capsule(U(.2),el,.046,.037,sk);capsule(U(.35),U(.68),.045,.043,sk);           // biceps
+    capsule(el,Fa(.35),.039,.037,sk);capsule(Fa(.3),hd,.036,.027,sk);             // forearm
+    sphere(sh0,.056,shirt);capsule(sh0,U(.4),.056,.052,shirt);capsule(U(.38),U(.42),.054,.052,dk);                // deltoid + sleeve
+    if(racketArm){capsule(Fa(.8),Fa(.97),.037,.035,pl.team<0?MAT.shortsA:MAT.shirtA);
+      const g=pl.ghost||(pl.ghost=[]);if(J.sw>.5&&Math.abs(J.d)<.2){g.forEach((o,i)=>{ctx.globalAlpha=ap*.12*(i+1);racket(o[0],o[1],o[2],1.15,pl.rk)});ctx.globalAlpha=ap}
+      const bb=norm(cross(J.aR,J.fs));g.push([hd,J.aR,bb]);if(g.length>3)g.shift();
+      racket(hd,J.aR,bb,1.15,pl.rk)}
+    sphere(add(hd,mul(racketArm?J.aR:[0,-1,0],.015)),.036,sk)};
+  const zc=zOf(J.chest),armRFar=zOf(J.armR.end)>zc+.05,armLFar=zOf(J.armL.end)>zc+.05;
+  const legOrder=[...J.legs].sort((a,b)=>zOf(b.knee)-zOf(a.knee));
+  if(armLFar)arm(J.shL,J.armL,false);if(armRFar)arm(J.shR,J.armR,true);
+  legOrder.forEach(leg);
+  // pelvis, torso with tapered waist, shirt hem, trapezius
+  capsule(add(J.hip,mul(J.rp,-.105)),add(J.hip,mul(J.rp,.105)),.115,.115,shorts);
+  capsule(add(J.hip,[0,-.03,0]),lerp3(J.hip,J.chest,.45),0,0,shirt,{r:J.rp,f:J.fs,kA:[.15,.1],kB:[.14,.095]});
+  capsule(lerp3(J.hip,J.chest,.4),J.chest,0,0,shirt,{r:J.rs,f:J.fs,kA:[.14,.095],kB:[.17,.11]});
+  line(lerp3(J.hip,J.chest,.15),lerp3(J.hip,J.chest,.85),'rgba(0,0,0,.08)',.012,.5);
+  capsule(J.shL,J.shR,.056,.056,shirt);
+  capsule(add(J.neck,mul(J.rs,-.09)),add(J.neck,mul(J.rs,.09)),.045,.045,shirt);
+  const back=dot(J.fs,sub(cam.pos,J.chest))<0;
+  if(back){const q=P(lerp3(J.hip,J.chest,.6));if(q[2]>NEAR){const fs=Math.round(.16*cam.F/q[2]);if(fs>8){ctx.font=`900 ${fs}px Archivo, sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle=pl.team<0?'rgba(14,49,107,.85)':'rgba(22,86,184,.85)';ctx.fillText(pl.num,q[0],q[1])}}}
+  capsule(J.neck,add(J.neck,[0,.09,0]),.048,.045,sk);
+  drawHead(pl,J,sk,hr);
+  if(!armLFar)arm(J.shL,J.armL,false);if(!armRFar)arm(J.shR,J.armR,true);
+  ctx.globalAlpha=1}
+
+/* ============ STATE ============ */
+let DT=.016,playing=false,prog=0,target=0,last=performance.now(),T0=last,intro=REDUCE?1:0,loaded=REDUCE;
+const film=document.getElementById('film');
+const CH=[{a:-1,b:.14,l:'Intro',go:0},{a:.25,b:.40,l:'À petit prix',go:.325},{a:.44,b:.57,l:'Matériel',go:.505},{a:.60,b:.735,l:'Événements',go:.652},{a:.77,b:.85,l:'Partenaires',go:.81},{a:.87,b:.93,l:'Adhésion',go:.9},{a:.95,b:9,l:'Réservation',go:.985}];
+/* scroll -> story time: short scroll between texts, more on the texts themselves */
+const SEG=[[0,.8],[.14,.45],[.25,.6],[.40,.3],[.44,.6],[.57,.3],[.60,.7],[.735,.3],[.77,.7],[.85,.3],[.87,.7],[.93,.3],[.95,.8],[1,0]];
+const SC=[0];for(let i=1;i<SEG.length;i++)SC.push(SC[i-1]+(SEG[i][0]-SEG[i-1][0])*SEG[i-1][1]);const STOT=SC[SC.length-1];
+const s2p=s=>{s*=STOT;let i=0;while(i<SEG.length-2&&s>SC[i+1])i++;return SEG[i][0]+(SEG[i+1][0]-SEG[i][0])*clamp((s-SC[i])/(SC[i+1]-SC[i]))};
+const p2s=p=>{let i=0;while(i<SEG.length-2&&p>SEG[i+1][0])i++;return (SC[i]+(SC[i+1]-SC[i])*clamp((p-SEG[i][0])/(SEG[i+1][0]-SEG[i][0])))/STOT};
+const FD=.03;const visOf=(i,p)=>clamp((p-CH[i].a)/FD)*clamp((CH[i].b-p)/FD);
+
+function frame(now){
+  const dt=Math.min(.05,(now-last)/1000);last=now;DT=dt||.016;const t=(now-T0)/1000;
+  const rect=film.getBoundingClientRect();
+  target=s2p(clamp(-rect.top/(film.offsetHeight-innerHeight)));
+  prog+=(target-prog)*(1-Math.exp(-dt*(REDUCE?60:5)));
+  if(loaded&&intro<1)intro=Math.min(1,intro+dt/1.6);
+  const ie=ease(intro);
+  if(!REDUCE)S+=dt;
+  if(playing){const total=film.offsetHeight-innerHeight;if(target>=.998)setPlay(false);else scrollBy(0,total/42*dt)}
+  if(rect.bottom>0)render(t,dt,ie);
+  updateUI(prog,ie,t);
+  requestAnimationFrame(frame)}
+
+function render(t,dt,ie){
+  const p=prog,c=camAt(p),drift=REDUCE?0:1-clamp(p/.08);
+  cam.pos=add(c.pos,[Math.sin(t*.17)*.8*drift,(1-ie)*9,Math.cos(t*.13)*.5*drift-(1-ie)*8]);cam.tgt=c.tgt;cam.fov=c.fov+(1-ie)*8;setCam();
+  const B=clamp(p/.21);                                  // construction 0..1
+  let L=clamp((B-.86)/.12);if(L>0&&L<1&&!REDUCE)L*=Math.sin(S*47)>-.2?1:.15;   // lights flicker on
+  const bp=clamp(B/.1)*(1-.8*clamp((B-.55)/.3));          // blueprint grid
+  const sinP=Math.max(.18,-cam.f[1]);
+  let g;
+  // sky
+  g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#01050F');g.addColorStop(.55,'#071C3D');g.addColorStop(1,'#0B2A5A');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  for(const s of stars){const q=P(add(cam.pos,mul(s.d,900)));if(q[2]<NEAR)continue;ctx.fillStyle=`rgba(230,240,255,${.35+.35*Math.sin(t*1.3+s.tw)})`;ctx.fillRect(q[0],q[1],s.s,s.s)}
+  const hd=norm([cam.f[0],0,cam.f[2]]),hz=P(add(cam.pos,mul(hd,1000)))[1];
+  if(hz>-H&&hz<H*2){g=ctx.createLinearGradient(0,hz-H*.35,0,hz+20);g.addColorStop(0,'rgba(40,90,170,0)');g.addColorStop(1,'rgba(70,130,220,.35)');ctx.fillStyle=g;ctx.fillRect(0,hz-H*.35,W,H*.35+20)}
+  ctx.fillStyle='#0A1A36';for(let i=0;i<ridge.length-1;i++){const a=ridge[i],b=ridge[i+1];const sp=clipPoly([[a[0],-15,a[2]],[b[0],-15,b[2]],b,a]);if(sp.length>2){path(sp);ctx.fill()}}
+  ctx.strokeStyle='rgba(140,175,230,.25)';ctx.lineWidth=1;for(let i=0;i<ridge.length-1;i++){const s=clipSeg(ridge[i],ridge[i+1]);if(s){ctx.beginPath();ctx.moveTo(s[0][0],s[0][1]);ctx.lineTo(s[1][0],s[1][1]);ctx.stroke()}}
+  let sp=clipPoly([[-250,0,-250],[250,0,-250],[250,0,250],[-250,0,250]]);if(sp.length>2){path(sp);ctx.fillStyle='#040C1D';ctx.fill()}
+  if(hz>-H&&hz<H*2){g=ctx.createLinearGradient(0,hz,0,hz+H*.3);g.addColorStop(0,'rgba(30,70,140,.45)');g.addColorStop(1,'rgba(30,70,140,0)');ctx.fillStyle=g;ctx.fillRect(0,hz,W,H*.3)}
+
+  /* --- construction: blueprint --- */
+  if(bp>0){const a=bp*.35;
+    for(let x=-14;x<=14;x+=2)line([x,.001,-16],[x,.001,16],`rgba(110,190,255,${a*.6})`,.01,.5);
+    for(let z=-16;z<=16;z+=2)line([-14,.001,z],[14,.001,z],`rgba(110,190,255,${a*.6})`,.01,.5);
+    ctx.setLineDash([6,6]);const o=[[-5,0,-10],[5,0,-10],[5,0,10],[-5,0,10]];for(let i=0;i<4;i++)line(o[i],o[(i+1)%4],`rgba(140,210,255,${bp*.9})`,.02,1);ctx.setLineDash([]);
+    const la=clamp(B/.06)*(1-clamp((B-.45)/.1));if(la>0){ctx.font='600 12px Inter, sans-serif';ctx.textAlign='center';ctx.fillStyle=`rgba(180,225,255,${la})`;
+      let q=P([0,0,-11.2]);if(q[2]>NEAR)ctx.fillText('10 m',q[0],q[1]);q=P([6.2,0,0]);if(q[2]>NEAR)ctx.fillText('20 m',q[0],q[1])}}
+  sp=clipPoly([[-7,0,-12.5],[7,0,-12.5],[7,0,12.5],[-7,0,12.5]]);if(sp.length>2){path(sp);ctx.fillStyle=`rgba(10,26,56,${clamp((B-.08)/.1)})`;ctx.fill()}
+  /* --- surface sweeps in --- */
+  const kf=ease(clamp((B-.1)/.2));
+  if(kf>0){const ze=lerp(-10,10,kf);sp=clipPoly([[-5,0,-10],[5,0,-10],[5,0,ze],[-5,0,ze]]);if(sp.length>2){path(sp);ctx.fillStyle=L>0?`rgb(${lerp(14,20,L)|0},${lerp(60,80,L)|0},${lerp(140,174,L)|0})`:'#0E3C8C';ctx.fill()}
+    for(let z=-10;z<ze-.01;z+=2){const z2=Math.min(z+1,ze);const tp=clipPoly([[-5,0,z],[5,0,z],[5,0,z2],[-5,0,z2]]);if(tp.length>2){path(tp);ctx.fillStyle='rgba(255,255,255,.025)';ctx.fill()}}
+    if(kf<1){line([-5.3,.01,ze],[5.3,.01,ze],'rgba(217,242,74,.9)',.06,2);ctx.globalCompositeOperation='lighter';line([-5.3,.01,ze],[5.3,.01,ze],'rgba(217,242,74,.25)',.35,4);ctx.globalCompositeOperation='source-over'}}
+  /* light pools */
+  if(L>0){ctx.globalCompositeOperation='lighter';
+    for(const l of lamps){const q=P([l.base[0]*.3,0,l.base[2]*.55]);if(q[2]<NEAR)continue;const r=7.5*cam.F/q[2];
+      ctx.save();ctx.translate(q[0],q[1]);ctx.scale(1,sinP);g=ctx.createRadialGradient(0,0,0,0,0,r);g.addColorStop(0,`rgba(120,180,255,${.16*L})`);g.addColorStop(1,'rgba(120,180,255,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,r,0,7);ctx.fill();ctx.restore()}
+    ctx.globalCompositeOperation='source-over'}
+  /* --- lines draw themselves --- */
+  COURT_LINES.forEach((ln,i)=>{const k=eOut(clamp((B-.27-i*.035)/.1));if(k<=0)return;const e=lerp3(ln[0],ln[1],k);
+    line(ln[0],e,'rgba(255,255,255,.9)',.05);if(k<1)dot3(e,.09,'#D9F24A')});
+
+  /* --- ball --- */
+  const ballA=clamp((p-.215)/.02);
+  const rp=REDUCE?[0,BR,-3]:stepRally(dt);
+  const w=clamp((p-.595)/.03)*clamp((.75-p)/.03),u=clamp((p-.605)/.12);
+  const ball=w>0?lerp3(rp,smashAt(u),w):rp;
+  trail.push(ball);if(trail.length>14)trail.shift();
+  if(ballA>0){const sh=P([ball[0],.003,ball[2]]);if(sh[2]>NEAR){const r=BR*1.3*cam.F/sh[2]*(1-clamp(ball[1]/5)*.5);
+    ctx.save();ctx.translate(sh[0],sh[1]);ctx.scale(1,sinP);ctx.fillStyle=`rgba(0,0,0,${(.45-clamp(ball[1]/5)*.3)*ballA})`;ctx.beginPath();ctx.arc(0,0,r,0,7);ctx.fill();ctx.restore()}}
+  for(let i=impacts.length-1;i>=0;i--){const m=impacts[i];m.t+=dt;if(m.t>.6){impacts.splice(i,1);continue}const k=m.t/.6;
+    if(ballA>0)ring(m.p,.15+k*.9,m.k==='g'?'y':'z',`rgba(217,242,74,${.7*(1-k)*ballA})`,.02)}
+  if(w>0){for(const [ue,pt,pl,sz] of[[.4,HIT,'z',1],[.58,SM[1].B,'y',1.6],[.76,SM[2].B,'z',1.4]]){const k=(u-ue)/.08;if(k>0&&k<1){
+      ring(pt,.1+k*sz,pl,`rgba(217,242,74,${(1-k)*w})`,.03);ring(pt,.05+k*sz*.6,pl,`rgba(255,255,255,${(1-k)*.6*w})`,.015)}}}
+
+  /* --- players update --- */
+  PL.forEach((pl,i)=>{let tx=pl.tx,tz=pl.tz;
+    if(i===0&&w>0){tx=lerp(tx,HIT[0]-pl.r[0]*.34,w);tz=lerp(tz,HIT[2]-.14,w)}
+    else if(w>0){tx=lerp(tx,pl.home[0]*1.1,w);tz=lerp(tz,pl.home[1]*1.05,w)}
+    const dx=tx-pl.x,dz=tz-pl.z,dd=Math.hypot(dx,dz),mv=Math.min(dd,6*dt);
+    if(dd>1e-4){pl.x+=dx/dd*mv;pl.z+=dz/dd*mv;if(mv>1e-3)pl.mv=[dx/dd,0,dz/dd]}pl.speed=lerp(pl.speed,dt>0?mv/dt:0,.2);pl.walk+=pl.speed*dt*3.2});
+  const savedHit=PL.map(pl=>[pl.hitAt,pl.kind]);
+  if(w>.5){PL.forEach(pl=>pl.hitAt=-99);PL[0].hitAt=S-(u-.4)*1.5;PL[0].kind='over';PL[0].jumpBig=.45}
+
+  /* --- sorted objects --- */
+  const items=[];
+  panels.forEach(pn=>{const k=eOut(clamp((B-.42-pn.ord*.22)/.1));if(k>0)items.push({d:zOf(pn.c),f:()=>drawPanel(pn,k)})});
+  const kn=eOut(clamp((B-.66)/.1));if(kn>0)items.push({d:zOf([0,.45,0]),f:()=>drawNet(kn)});
+  lamps.forEach(l=>{const k=eOut(clamp((B-.72-l.i*.025)/.1));if(k>0)items.push({d:zOf(l.top),f:()=>drawPole(l,k)})});
+  if(ballA>0)items.push({d:zOf(ball)-.01,f:()=>{ctx.globalAlpha=ballA;drawTrail();ball3(ball);ctx.globalAlpha=1}});
+  PL.forEach((pl,i)=>{const ap=clamp((p-.19-i*.012)/.03);if(ap<=0)return;
+    items.push({d:zOf([pl.x,1,pl.z]),f:()=>{if(ap<1)ring([pl.x,0,pl.z],.3+ap*.6,'y',`rgba(217,242,74,${1-ap})`,.03);drawPlayer(pl,ease(ap),ballA>0?ball:null)}})});
+  items.sort((a,b)=>b.d-a.d).forEach(i=>i.f());
+  PL.forEach((pl,i)=>{pl.hitAt=savedHit[i][0];pl.kind=savedHit[i][1];pl.jumpBig=0});
+
+  /* --- floating gear (chapter 2) --- */
+  const v2=visOf(2,p);
+  if(v2>0){const s=ease(v2),ctr=sum(cam.pos,mul(cam.f,1.55),mul(cam.r,.2),mul(cam.u,-.3+(1-s)*-.5));
+    const a=norm(add(cam.u,mul(cam.r,.3*Math.sin(t*.8)))),bb=norm(sub(mul(cam.r,Math.cos(t*.9)),mul(cam.f,Math.sin(t*.9)))),bo=norm(sub(bb,mul(a,dot(bb,a))));
+    ctx.globalAlpha=s;racket(sub(ctr,mul(a,.25)),a,bo,1,'#D9F24A');
+    for(let i=0;i<3;i++){const an=t*.9+i*2.09;ball3(sum(ctr,mul(cam.r,Math.cos(an)*.32),mul(cam.f,Math.sin(an)*.2),mul(cam.u,.12+Math.sin(t*1.4+i)*.06)),.034)}
+    ctx.globalAlpha=1}
+
+  /* --- volumetric light, dust, glows --- */
+  if(L>0){ctx.globalCompositeOperation='lighter';
+    for(const l of lamps){const c0=[l.base[0]*.3,0,l.base[2]*.55],side=norm(cross(sub(c0,l.head),UP));
+      const cone=clipPoly([add(l.head,mul(side,.25)),add(l.head,mul(side,-.25)),add(c0,mul(side,-4.5)),add(c0,mul(side,4.5))]);
+      if(cone.length>2){const a=P(l.head),b=P(c0);g=ctx.createLinearGradient(a[0],a[1],b[0],b[1]);g.addColorStop(0,`rgba(170,210,255,${.13*L})`);g.addColorStop(1,'rgba(170,210,255,0)');path(cone);ctx.fillStyle=g;ctx.fill()}}
+    for(const d of dust){const q=P([d.b[0]+Math.sin(t*.25+d.ph)*.6,(d.b[1]+t*.12)%6.5,d.b[2]+Math.cos(t*.2+d.ph)*.6]);if(q[2]<NEAR)continue;
+      const s=Math.min(3,.03*cam.F/q[2]);ctx.fillStyle=`rgba(200,225,255,${(.25+.2*Math.sin(t+d.ph))*L})`;ctx.fillRect(q[0],q[1],s,s)}
+    for(const l of lamps){const q=P(l.head);if(q[2]<NEAR)continue;const r=Math.min(260,2.2*cam.F/q[2]);
+      g=ctx.createRadialGradient(q[0],q[1],0,q[0],q[1],r);g.addColorStop(0,`rgba(255,255,255,${.95*L})`);g.addColorStop(.08,`rgba(200,228,255,${.6*L})`);g.addColorStop(1,'rgba(120,170,255,0)');
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(q[0],q[1],r,0,7);ctx.fill();
+      g=ctx.createLinearGradient(q[0]-r*2,0,q[0]+r*2,0);g.addColorStop(0,'rgba(150,200,255,0)');g.addColorStop(.5,`rgba(190,220,255,${.28*L})`);g.addColorStop(1,'rgba(150,200,255,0)');
+      ctx.fillStyle=g;ctx.fillRect(q[0]-r*2,q[1]-1,r*4,2)}
+    ctx.globalCompositeOperation='source-over'}
+}
+function drawTrail(){for(let i=1;i<trail.length;i++){const a=P(trail[i-1]),c=P(trail[i]);if(a[2]<NEAR||c[2]<NEAR)continue;const k=i/trail.length;
+  ctx.strokeStyle=`rgba(217,242,74,${.45*k})`;ctx.lineWidth=Math.max(1,BR*1.4*cam.F/c[2]*k);ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(c[0],c[1]);ctx.stroke()}}
+function drawPanel(pn,k){const q=[pn.q[0],pn.q[1],lerp3(pn.q[1],pn.q[2],k),lerp3(pn.q[0],pn.q[3],k)];
+  const sp=clipPoly(q);if(sp.length<3)return;
+  if(pn.k==='g'){path(sp);ctx.fillStyle='rgba(150,200,255,.07)';ctx.fill();
+    const g=ctx.createLinearGradient(sp[0][0],sp[0][1],sp[2][0],sp[2][1]);g.addColorStop(.3,'rgba(255,255,255,0)');g.addColorStop(.5,'rgba(255,255,255,.07)');g.addColorStop(.7,'rgba(255,255,255,0)');ctx.fillStyle=g;ctx.fill();
+    ctx.strokeStyle='rgba(200,225,255,.42)';ctx.lineWidth=1;ctx.stroke();line(bil(q,.15,0),bil(q,.45,1),'rgba(255,255,255,.06)',.12)}
+  else{const n=Math.round(Math.hypot(...sub(q[1],q[0]))/.3);
+    for(let i=1;i<n;i++)line(bil(q,i/n,0),bil(q,i/n,1),'rgba(170,195,230,.10)',.01,.5);
+    for(let j=1;j<6;j++)line(bil(q,0,j/6),bil(q,1,j/6),'rgba(170,195,230,.08)',.01,.5);
+    path(sp);ctx.strokeStyle='rgba(190,210,235,.32)';ctx.lineWidth=1;ctx.stroke()}
+  if(k<1){line(q[3],q[2],'rgba(217,242,74,.95)',.04,1.5)}}
+function drawNet(k){const top=[];for(let i=0;i<=10;i++){const x=-5+i;top.push([x,(.88+.04*(x/5)**2)*k,0])}
+  const sp=clipPoly([[-5,0,0],[5,0,0],...top.slice().reverse()]);if(sp.length>2){path(sp);ctx.fillStyle='rgba(3,10,24,.35)';ctx.fill()}
+  for(let x=-5;x<=5;x+=.25)line([x,0,0],[x,(.88+.04*(x/5)**2)*k,0],'rgba(220,230,245,.18)',.008,.5);
+  for(let y=.15;y<.85*k;y+=.15)line([-5,y,0],[5,y,0],'rgba(220,230,245,.15)',.008,.5);
+  for(let i=0;i<10;i++)line(top[i],top[i+1],'rgba(255,255,255,.95)',.05,1.2);
+  for(const x of[-5,5])line([x,0,0],[x,.95*k,0],'#C9D6EA',.07,1.5)}
+function drawPole(l,k){const top=lerp3(l.base,l.top,k);line(l.base,top,'#22324F',.16,1.5);if(k>.95)line(l.top,l.head,'#2B3D5E',.1,1.2)}
+
+/* ============ UI ============ */
+CH.forEach((c,i)=>{c.el=document.getElementById('c'+i);const t=c.el.querySelector('.t');
+  t.setAttribute('aria-label',t.textContent);
+  t.innerHTML=t.dataset.lines.split('|').map(ln=>ln.split(' ').map(w=>'<span class="w" aria-hidden="true">'+[...w].map(ch=>'<span class="c">'+ch+'</span>').join('')+'</span>').join(' ')).join('<br>');
+  c.letters=[...t.querySelectorAll('.c')];c.fades=[...c.el.querySelectorAll('.fade')];c.v=-1});
+const $=id=>document.getElementById(id);
+const cardwrap=$('cardwrap'),card=$('card'),dim=$('dim'),steps=[...$('steps').children],dots=[...document.querySelectorAll('.dots button')];
+const STAGES=[[0,'Plan'],[.1,'Revêtement'],[.27,'Lignes'],[.42,'Vitres'],[.66,'Filet'],[.72,'Projecteurs'],[.86,'Éclairage'],[1,'Prêt à jouer']];
+function updateUI(p,ie,t){
+  let best=0,bv=-1;
+  CH.forEach((c,i)=>{let v=visOf(i,p);if(i===0)v*=clamp(ie*1.15-.1);
+    if(v>bv){bv=v;best=i}
+    if(Math.abs(v-c.v)<.002&&!(i===5&&v>0))return;c.v=v;
+    c.el.classList.toggle('on',v>0);c.el.classList.toggle('live',v>.7);
+    const n=c.letters.length,enter=p>=c.a+FD||i===0;
+    c.letters.forEach((el,j)=>{const ord=enter?j/n:(n-1-j)/n;const a=REDUCE?(v>.5?1:0):ease(clamp(v*1.7-ord*.7));
+      el.style.opacity=a;el.style.filter=a>.98?'none':`blur(${(1-a)*16}px)`;
+      el.style.transform=a>.98?'none':`translate3d(0,${(1-a)*.45}em,0) scale(${1+(1-a)*.35}) rotate(${(1-a)*(j%2?6:-6)}deg)`});
+    const fv=REDUCE?(v>.5?1:0):clamp(v*2-1);
+    c.fades.forEach(el=>{el.style.opacity=fv;el.style.transform=`translate3d(0,${(1-fv)*24}px,0)`});
+    if(i===5){const k=REDUCE?(v>.5?1:0):ease(v),fl=REDUCE?0:Math.sin(t*1.1)*5*k;
+      cardwrap.style.opacity=clamp(v*1.6);
+      cardwrap.style.transform=`perspective(1200px) translate3d(0,${(1-k)*160}px,0) rotateX(${(1-k)*68+fl*.4}deg) rotateY(${fl}deg) rotateZ(${(1-k)*-10}deg)`}
+    if(i===6)steps.forEach((el,j)=>el.style.setProperty('--s',REDUCE?(v>.5?1:0):ease(clamp(v*2.2-.6-j*.3))))});
+  dim.style.opacity=Math.max(.25*ease(visOf(4,p)),.5*ease(visOf(5,p)),.55*ease(visOf(6,p)));
+
+  if(bv<=0){best=0;CH.forEach((c,i)=>{if(p>=c.a)best=i})}
+  $('hudn').textContent=String(best).padStart(2,'0');$('hudl').textContent=CH[best].l;$('hudb').style.transform=`scaleX(${p})`;
+  dots.forEach((d,i)=>d.setAttribute('aria-current',i===best));
+  const B=clamp(p/.21),bv2=1-clamp((p-.215)/.03);
+  const bel=$('build');bel.style.opacity=bv2*clamp(ie*2-1);bel.style.visibility=bv2>0?'visible':'hidden';
+  $('buildn').textContent=Math.round(B*100)+' %';$('buildb').style.transform=`scaleX(${B})`;
+  $('builds').textContent=STAGES.filter(s=>B>=s[0]).pop()[1]}
+function setPlay(on){playing=on;const b=$('play');b.setAttribute('aria-pressed',on);$('playt').textContent=on?'Pause':'Lecture'}
+$('play').addEventListener('click',()=>{if(!playing&&target>=.998)scrollTo(0,film.offsetTop);setPlay(!playing)});
+['wheel','touchstart','keydown'].forEach(ev=>addEventListener(ev,e=>{if(playing&&!(e.target&&e.target.closest&&e.target.closest('#play')))setPlay(false)},{passive:true}));
+const RULES=$('regles');let rulesFrom=null;
+function openRules(push){if(!RULES.hidden)return;rulesFrom=document.activeElement;setPlay(false);RULES.hidden=false;RULES.classList.add('show');document.documentElement.classList.add('lock');RULES.scrollTop=0;
+  if(push&&location.hash!=='#regles')location.hash='regles';setTimeout(()=>$('rules-close').focus(),30)}
+function closeRules(){if(RULES.hidden)return;RULES.hidden=true;RULES.classList.remove('show');document.documentElement.classList.remove('lock');
+  if(location.hash==='#regles'){try{history.replaceState(null,'',location.pathname+location.search)}catch(e){location.hash=''}}
+  if(rulesFrom&&rulesFrom.focus)rulesFrom.focus()}
+$('nav-rules').addEventListener('click',e=>{e.preventDefault();openRules(true)});
+$('rules-close').addEventListener('click',closeRules);
+addEventListener('keydown',e=>{if(e.key==='Escape')closeRules()});
+addEventListener('hashchange',()=>{location.hash==='#regles'?openRules(false):closeRules()});
+if(location.hash==='#regles')openRules(false);
+card.addEventListener('click',()=>{const f=card.classList.toggle('flipped');card.setAttribute('aria-pressed',f)});
+document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();
+  const top=film.offsetTop+p2s(CH[+b.dataset.goto].go)*(film.offsetHeight-innerHeight);scrollTo({top,behavior:REDUCE?'auto':'smooth'})}));
+
+/* LOADER */
+const loader=$('loader'),ldn=$('ldn');
+if(REDUCE){loader.remove()}else{const s=performance.now();(function tick(n){const k=clamp((n-s)/1400);ldn.textContent=Math.round(ease(k)*100);
+  if(k<1)requestAnimationFrame(tick);else{loader.classList.add('out');loaded=true;setTimeout(()=>loader.remove(),1100)}})(s)}
+
+/* REVEALS */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.2});
+document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%4)*90+'ms';io.observe(el)});
+
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
