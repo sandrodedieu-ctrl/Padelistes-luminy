@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Inscription · Les Padelistes de Luminy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#030A18;--navy:#071C3D;--court:#1656B8;--ball:#D9F24A;--white:#F4F7FB;--muted:#B4C2DA}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:radial-gradient(circle at 20% 0%,#0E3A7A 0%,var(--navy) 45%,var(--ink) 100%);color:var(--white);font-family:'Inter',system-ui,sans-serif;display:flex;align-items:center;justify-content:center;padding:32px 16px}
+.card{width:100%;max-width:460px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:32px 24px;backdrop-filter:blur(8px)}
+.tag{display:inline-block;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ball);margin-bottom:10px}
+h1{font-family:'Archivo',system-ui,sans-serif;font-weight:900;text-transform:uppercase;font-size:clamp(28px,7vw,40px);line-height:.95;margin-bottom:10px}
+p.sub{color:var(--muted);font-size:15px;margin-bottom:28px}
+label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em}
+.field{margin-bottom:18px}
+input,select{width:100%;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(3,10,24,.55);color:var(--white);font:inherit;font-size:16px;outline:none;transition:border-color .2s}
+input:focus,select:focus{border-color:var(--ball)}
+select option{color:#000}
+button{width:100%;margin-top:8px;padding:16px;border:0;border-radius:999px;background:var(--ball);color:var(--ink);font-family:'Archivo',sans-serif;font-weight:900;font-size:16px;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;transition:transform .2s}
+button:hover{transform:translateY(-2px)}
+.hidden{display:none}
+a.back{display:block;text-align:center;margin-top:20px;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<main class="card">
+  <span class="tag">Les Padelistes de Luminy</span>
+  <h1>Rejoins l'asso</h1>
+  <p class="sub">Remplis tes infos, ça prend 30 secondes.</p>
+
+  <form name="inscription" method="POST" action="/merci" data-netlify="true" netlify-honeypot="bot-field">
+    <input type="hidden" name="form-name" value="inscription">
+    <p class="hidden"><label>Ne pas remplir : <input name="bot-field"></label></p>
+
+    <div class="field">
+      <label for="nom">Nom</label>
+      <input id="nom" name="nom" type="text" required autocomplete="family-name">
+    </div>
+    <div class="field">
+      <label for="prenom">Prénom</label>
+      <input id="prenom" name="prenom" type="text" required autocomplete="given-name">
+    </div>
+    <div class="field">
+      <label for="niveau">Niveau d'étude</label>
+      <select id="niveau" name="niveau" required>
+        <option value="" disabled selected>Choisis ton niveau</option>
+        <option>L1</option>
+        <option>L2</option>
+        <option>L3</option>
+        <option>M1</option>
+        <option>M2</option>
+        <option>Doctorat</option>
+        <option>Autre</option>
+      </select>
+    </div>
+    <button type="submit">Envoyer</button>
+  </form>
+  <a class="back" href="/">← Retour au site</a>
+</main>
+</body>
+</html>
