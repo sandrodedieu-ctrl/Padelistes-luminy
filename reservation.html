@@ -39,6 +39,11 @@ textarea{min-height:240px;resize:vertical;line-height:1.5}
 .mail b{color:var(--white);user-select:all}
 ul.tips{list-style:none;display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:15px}
 ul.tips li::before{content:"🎾 "}
+.hours{display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);padding-top:14px}
+.hours div{display:flex;flex-direction:column;gap:2px}
+.hours b{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ball)}
+.hours span{font-size:15px;font-variant-numeric:tabular-nums}
+select:disabled{opacity:.55}
 button:focus-visible,a:focus-visible{outline:2px solid var(--ball);outline-offset:3px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -65,6 +70,11 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ball);outline-offse
       <li>Note le jour, le numéro du terrain et l'heure qui t'intéressent.</li>
       <li>Une partie de padel se joue à 4 : préviens tes partenaires avant de réserver.</li>
     </ul>
+    <div class="hours">
+      <div><b>Lundi → vendredi</b><span>7h30 · 9h · 10h30 · 12h · 14h · 16h · 17h30 · 19h · 20h20</span></div>
+      <div><b>Samedi → dimanche</b><span>7h30 · 9h · 10h30 · 12h · 13h30 · 15h · 16h30 · 18h · 19h30 · 21h</span></div>
+      <div><b>Terrains</b><span>4 courts : Court 1, Court 2, Court 3, Court 4</span></div>
+    </div>
   </section>
 
   <section class="step">
@@ -107,15 +117,25 @@ const EMAIL = "";
 
 const $ = id => document.getElementById(id);
 
-// Créneaux de 8h à 22h, toutes les 30 minutes
+// Créneaux de réservation des terrains de Luminy
+const SEMAINE = ['7h30', '9h', '10h30', '12h', '14h', '16h', '17h30', '19h', '20h20'];
+const WEEKEND = ['7h30', '9h', '10h30', '12h', '13h30', '15h', '16h30', '18h', '19h30', '21h'];
 const heure = $('heure');
-heure.append(new Option('Choisis l\'heure', '', true, true));
-heure.options[0].disabled = true;
-for (let h = 8; h <= 22; h++) for (const m of ['00', '30']) {
-  if (h === 22 && m === '30') continue;
-  const v = String(h).padStart(2, '0') + 'h' + m;
-  heure.append(new Option(v, v));
+
+function remplirHeures(){
+  const v = $('jour').value, avant = heure.value;
+  heure.replaceChildren();
+  if (!v) { heure.append(new Option('Choisis d\'abord le jour', '', true, true)); heure.disabled = true; return; }
+  const jourSemaine = new Date(v + 'T12:00:00').getDay();
+  const liste = (jourSemaine === 0 || jourSemaine === 6) ? WEEKEND : SEMAINE;
+  heure.disabled = false;
+  heure.append(new Option('Choisis l\'heure', '', true, true));
+  heure.options[0].disabled = true;
+  for (const h of liste) heure.append(new Option(h, h));
+  if (liste.includes(avant)) heure.value = avant;
 }
+$('jour').addEventListener('input', remplirHeures);
+remplirHeures();
 
 // Pas de date passée
 const today = new Date(); today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
