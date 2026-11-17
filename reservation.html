@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Réserver un terrain · Les Padelistes de Luminy</title>
+<meta name="description" content="Réserve un terrain de padel à Luminy en 3 étapes : télécharge l'application, regarde les terrains libres, envoie ton message de réservation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#030A18;--navy:#071C3D;--blue:#0E3A7A;--court:#1656B8;--ball:#D9F24A;--white:#F4F7FB;--muted:#B4C2DA;--line:rgba(244,247,251,.14)}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{min-height:100vh;background:radial-gradient(ellipse at 15% -10%,var(--court) 0%,var(--navy) 45%,var(--ink) 100%);color:var(--white);font-family:'Inter',system-ui,sans-serif;font-size:16px;line-height:1.5;padding:40px max(16px,env(safe-area-inset-left)) 56px max(16px,env(safe-area-inset-right))}
+.wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+a.back{color:var(--muted);font-size:14px;text-decoration:none}
+a.back:hover{color:var(--ball)}
+.tag{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ball)}
+h1{font-family:'Archivo',system-ui,sans-serif;font-weight:900;text-transform:uppercase;font-size:clamp(32px,8vw,48px);line-height:.95;text-wrap:balance}
+.lead{color:var(--muted)}
+.step{background:rgba(244,247,251,.05);border:1px solid var(--line);border-radius:18px;padding:22px 20px;display:flex;flex-direction:column;gap:14px}
+.head{display:flex;gap:14px;align-items:center}
+.num{flex:none;width:40px;height:40px;border-radius:50%;background:var(--ball);color:var(--ink);font:900 18px 'Archivo',sans-serif;display:grid;place-items:center}
+h2{font:900 20px/1.1 'Archivo',sans-serif;text-transform:uppercase}
+.step p{color:var(--muted);font-size:15px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 20px;border:0;border-radius:999px;background:var(--ball);color:var(--ink);font:900 15px 'Archivo',sans-serif;text-transform:uppercase;letter-spacing:.03em;text-decoration:none;cursor:pointer;transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn.ghost{background:transparent;color:var(--white);border:1px solid var(--line);font:600 14px 'Inter',sans-serif;text-transform:none;letter-spacing:0}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:460px){.row{grid-template-columns:1fr}}
+label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);min-width:0}
+input,select,textarea{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(3,10,24,.6);color:var(--white);font:400 16px 'Inter',sans-serif;outline:none}
+select option{color:#000}
+input:focus,select:focus,textarea:focus{border-color:var(--ball)}
+textarea{min-height:240px;resize:vertical;line-height:1.5}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.msg{font-size:14px;color:var(--ball);min-height:1.2em}
+.mail{font-size:14px;color:var(--muted)}
+.mail b{color:var(--white);user-select:all}
+ul.tips{list-style:none;display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:15px}
+ul.tips li::before{content:"🎾 "}
+button:focus-visible,a:focus-visible{outline:2px solid var(--ball);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <a class="back" href="/">← Retour au site</a>
+  <span class="tag">Les Padelistes de Luminy</span>
+  <h1>Réserve ton terrain</h1>
+  <p class="lead">Trois étapes, deux minutes, et tu es sur le terrain.</p>
+
+  <section class="step">
+    <div class="head"><span class="num">1</span><h2>Télécharge l'appli</h2></div>
+    <p>Installe l'application <b>Tennis Padel Luminy</b> sur ton iPhone. C'est elle qui affiche les créneaux des terrains.</p>
+    <div class="actions">
+      <a class="btn" href="https://apps.apple.com/fr/app/tennis-padel-luminy/id1564755077" target="_blank" rel="noopener">Télécharger sur l'App Store</a>
+    </div>
+  </section>
+
+  <section class="step">
+    <div class="head"><span class="num">2</span><h2>Regarde les terrains libres</h2></div>
+    <p>Ouvre l'appli et va dans l'onglet <b>Padel</b>. Choisis ton jour : tu vois tous les terrains disponibles et leurs horaires.</p>
+    <ul class="tips">
+      <li>Note le jour, le numéro du terrain et l'heure qui t'intéressent.</li>
+      <li>Une partie de padel se joue à 4 : préviens tes partenaires avant de réserver.</li>
+    </ul>
+  </section>
+
+  <section class="step">
+    <div class="head"><span class="num">3</span><h2>Envoie ta demande</h2></div>
+    <p>Remplis les cases, ton message de réservation s'écrit tout seul. Il ne te reste qu'à l'envoyer.</p>
+    <form id="f" novalidate>
+      <div class="row">
+        <label for="prenom">Prénom<input id="prenom" autocomplete="given-name" maxlength="40"></label>
+        <label for="nom">Nom<input id="nom" autocomplete="family-name" maxlength="40"></label>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <label for="jour">Jour<input id="jour" type="date"></label>
+        <label for="heure">Heure
+          <select id="heure"></select>
+        </label>
+      </div>
+      <label for="court" style="margin-top:12px">Court
+        <select id="court">
+          <option value="" disabled selected>Choisis le court</option>
+          <option>Court 1</option><option>Court 2</option><option>Court 3</option><option>Court 4</option>
+        </select>
+      </label>
+      <label for="texte" style="margin-top:16px">Ton message
+        <textarea id="texte" readonly></textarea>
+      </label>
+    </form>
+    <div class="actions">
+      <button class="btn" id="copy" type="button">Copier le message</button>
+      <a class="btn ghost" id="mailto" href="#">Envoyer par mail</a>
+      <a class="btn ghost" id="wa" href="#" target="_blank" rel="noopener">Envoyer sur WhatsApp</a>
+    </div>
+    <p class="msg" id="msg" role="status"></p>
+    <p class="mail" id="mailinfo">Adresse mail de réservation bientôt disponible. En attendant, copie le message et envoie-le sur le groupe WhatsApp de l'asso.</p>
+  </section>
+</main>
+
+<script>
+// Mets ici l'adresse mail de réservation quand elle est disponible, ex : "reservation@exemple.fr"
+const EMAIL = "";
+
+const $ = id => document.getElementById(id);
+
+// Créneaux de 8h à 22h, toutes les 30 minutes
+const heure = $('heure');
+heure.append(new Option('Choisis l\'heure', '', true, true));
+heure.options[0].disabled = true;
+for (let h = 8; h <= 22; h++) for (const m of ['00', '30']) {
+  if (h === 22 && m === '30') continue;
+  const v = String(h).padStart(2, '0') + 'h' + m;
+  heure.append(new Option(v, v));
+}
+
+// Pas de date passée
+const today = new Date(); today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+$('jour').min = today.toISOString().slice(0, 10);
+
+function jourTexte(v){
+  if (!v) return '[jour]';
+  const d = new Date(v + 'T12:00:00');
+  return d.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
+}
+
+function build(){
+  const prenom = $('prenom').value.trim(), nom = $('nom').value.trim();
+  const qui = [prenom, nom].filter(Boolean).join(' ');
+  const txt =
+`Bonjour,
+
+Je souhaiterais réserver un terrain de padel :
+• Jour : ${jourTexte($('jour').value)}
+• Court : ${$('court').value || '[court]'}
+• Heure : ${$('heure').value || '[heure]'}
+
+Pouvez-vous me confirmer la réservation ?
+
+Merci et bonne journée,
+${qui || '[prénom nom]'}
+Les Padelistes de Luminy`;
+  $('texte').value = txt;
+  const subject = 'Réservation padel ' + jourTexte($('jour').value) + ' ' + ($('heure').value || '');
+  $('mailto').href = 'mailto:' + EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(txt);
+  $('wa').href = 'https://wa.me/?text=' + encodeURIComponent(txt);
+  return txt;
+}
+
+function complet(){
+  const manque = [];
+  if (!$('jour').value) manque.push('le jour');
+  if (!$('court').value) manque.push('le court');
+  if (!$('heure').value) manque.push("l'heure");
+  if (manque.length) { $('msg').textContent = 'Il manque ' + manque.join(', ') + '.'; return false; }
+  $('msg').textContent = ''; return true;
+}
+
+['prenom','nom','jour','court','heure'].forEach(id => $(id).addEventListener('input', build));
+['mailto','wa'].forEach(id => $(id).addEventListener('click', e => { if (!complet()) e.preventDefault(); }));
+
+$('copy').addEventListener('click', async () => {
+  if (!complet()) return;
+  const txt = build();
+  try { await navigator.clipboard.writeText(txt); $('msg').textContent = 'Message copié. Colle-le où tu veux.'; }
+  catch (e) { $('texte').select(); $('msg').textContent = 'Sélectionne le texte et copie-le.'; }
+});
+
+if (EMAIL) $('mailinfo').innerHTML = 'Adresse de réservation : <b></b>', $('mailinfo').querySelector('b').textContent = EMAIL;
+else $('mailto').hidden = true;
+
+build();
+</script>
+</body>
+</html>
