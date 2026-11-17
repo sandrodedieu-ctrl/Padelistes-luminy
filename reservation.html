@@ -82,120 +82,12 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ball);outline-offse
 
   <section class="step">
     <div class="head"><span class="num">3</span><h2>Envoie ta demande</h2></div>
-    <p>Remplis les cases, ton message de réservation s'écrit tout seul. Il ne te reste qu'à l'envoyer.</p>
-    <form id="f" novalidate>
-      <div class="row">
-        <label for="prenom">Prénom<input id="prenom" autocomplete="given-name" maxlength="40"></label>
-        <label for="nom">Nom<input id="nom" autocomplete="family-name" maxlength="40"></label>
-      </div>
-      <div class="row" style="margin-top:12px">
-        <label for="jour">Jour<input id="jour" type="date"></label>
-        <label for="heure">Heure
-          <select id="heure"></select>
-        </label>
-      </div>
-      <label for="court" style="margin-top:12px">Court
-        <select id="court">
-          <option value="" disabled selected>Choisis le court</option>
-          <option>Court 1</option><option>Court 2</option><option>Court 3</option><option>Court 4</option>
-        </select>
-      </label>
-      <label for="texte" style="margin-top:16px">Ton message
-        <textarea id="texte" readonly></textarea>
-      </label>
-    </form>
+    <p>Remplis le formulaire de réservation : ton nom, ton portable, le jour, l'heure et le court. On te confirme ta réservation très vite par message.</p>
     <div class="actions">
-      <button class="btn" id="copy" type="button">Copier le message</button>
-      <a class="btn ghost" id="mailto" href="#">Envoyer par mail</a>
-      <a class="btn ghost" id="wa" href="#" target="_blank" rel="noopener">Envoyer sur WhatsApp</a>
+      <a class="btn" href="https://tally.so/r/xVDyoE" target="_blank" rel="noopener">Réserver mon terrain</a>
     </div>
-    <p class="msg" id="msg" role="status"></p>
-    <p class="mail" id="mailinfo">Adresse mail de réservation bientôt disponible. En attendant, copie le message et envoie-le sur le groupe WhatsApp de l'asso.</p>
   </section>
 </main>
 
-<script>
-// Mets ici l'adresse mail de réservation quand elle est disponible, ex : "reservation@exemple.fr"
-const EMAIL = "";
-
-const $ = id => document.getElementById(id);
-
-// Créneaux de réservation des terrains de Luminy
-const SEMAINE = ['7h30', '9h', '10h30', '12h', '14h', '16h', '17h30', '19h', '20h30'];
-const WEEKEND = ['7h30', '9h', '10h30', '12h', '13h30', '15h', '16h30', '18h', '19h30', '21h'];
-const heure = $('heure');
-
-function remplirHeures(){
-  const v = $('jour').value, avant = heure.value;
-  heure.replaceChildren();
-  if (!v) { heure.append(new Option('Choisis d\'abord le jour', '', true, true)); heure.disabled = true; return; }
-  const jourSemaine = new Date(v + 'T12:00:00').getDay();
-  const liste = (jourSemaine === 0 || jourSemaine === 6) ? WEEKEND : SEMAINE;
-  heure.disabled = false;
-  heure.append(new Option('Choisis l\'heure', '', true, true));
-  heure.options[0].disabled = true;
-  for (const h of liste) heure.append(new Option(h, h));
-  if (liste.includes(avant)) heure.value = avant;
-}
-$('jour').addEventListener('input', remplirHeures);
-remplirHeures();
-
-// Pas de date passée
-const today = new Date(); today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
-$('jour').min = today.toISOString().slice(0, 10);
-
-function jourTexte(v){
-  if (!v) return '[jour]';
-  const d = new Date(v + 'T12:00:00');
-  return d.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
-}
-
-function build(){
-  const prenom = $('prenom').value.trim(), nom = $('nom').value.trim();
-  const qui = [prenom, nom].filter(Boolean).join(' ');
-  const txt =
-`Bonjour,
-
-Je souhaiterais réserver un terrain de padel :
-• Jour : ${jourTexte($('jour').value)}
-• Court : ${$('court').value || '[court]'}
-• Heure : ${$('heure').value || '[heure]'}
-
-Pouvez-vous me confirmer la réservation ?
-
-Merci et bonne journée,
-${qui || '[prénom nom]'}
-Les Padelistes de Luminy`;
-  $('texte').value = txt;
-  const subject = 'Réservation padel ' + jourTexte($('jour').value) + ' ' + ($('heure').value || '');
-  $('mailto').href = 'mailto:' + EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(txt);
-  $('wa').href = 'https://wa.me/?text=' + encodeURIComponent(txt);
-  return txt;
-}
-
-function complet(){
-  const manque = [];
-  if (!$('jour').value) manque.push('le jour');
-  if (!$('court').value) manque.push('le court');
-  if (!$('heure').value) manque.push("l'heure");
-  if (manque.length) { $('msg').textContent = 'Il manque ' + manque.join(', ') + '.'; return false; }
-  $('msg').textContent = ''; return true;
-}
-
-['prenom','nom','jour','court','heure'].forEach(id => $(id).addEventListener('input', build));
-['mailto','wa'].forEach(id => $(id).addEventListener('click', e => { if (!complet()) e.preventDefault(); }));
-
-$('copy').addEventListener('click', async () => {
-  if (!complet()) return;
-  const txt = build();
-  try { await navigator.clipboard.writeText(txt); $('msg').textContent = 'Message copié. Colle-le où tu veux.'; }
-  catch (e) { $('texte').select(); $('msg').textContent = 'Sélectionne le texte et copie-le.'; }
-});
-
-if (EMAIL) $('mailinfo').innerHTML = 'Adresse de réservation : <b></b>', $('mailinfo').querySelector('b').textContent = EMAIL;
-else $('mailto').hidden = true;
-
-build();
-</script>
 </body>
 </html>
